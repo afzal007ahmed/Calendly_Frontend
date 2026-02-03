@@ -1,5 +1,7 @@
 export const routes = {
-   root : '/'
+   scheduling : '/' ,
+   availability : "/availabily",
+   meetings : '/meetings'
 }
 
 
