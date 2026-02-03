@@ -32,8 +32,8 @@ const AppSidebar = () => {
     },
   ];
   return (
-    <Sidebar>
-      <SidebarHeader className="mt-6 ml-4">
+    <Sidebar> 
+      <SidebarHeader className="mt-6 ml-4 bg-white">
         <div className="flex gap-2 items-end">
           <img
             src="calendly_logo.svg"
@@ -42,7 +42,7 @@ const AppSidebar = () => {
           <img src="calendly_name.svg" className="object-contain w-[100px]" />
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className='bg-white'>
         <SidebarMenu className="p-4">
           {menuItems.map((item, index) => (
             <SidebarMenuItem key={index} className="mt-1">

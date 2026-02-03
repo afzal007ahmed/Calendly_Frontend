@@ -11,10 +11,12 @@ function App() {
       <BrowserRouter>
         <SidebarProvider>
           <AppSidebar />
-          <SidebarTrigger />
           <div className="flex-1 flex flex-col">
+            <SidebarTrigger className="h-[30px] absolute top-0" />
             <Navbar />
-            <RouteManager />
+            <div className="bg-[#fafafa] flex-1 p-6">
+              <RouteManager />
+            </div>
           </div>
         </SidebarProvider>
       </BrowserRouter>
