@@ -1,14 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { BrowserRouter } from "react-router";
 import RouteManager from "./RouteManager/RouteManager";
+import { AppContext } from "./context/appContext";
 
 function App() {
   return (
-    <div className="flex">
-      <BrowserRouter>
-        <RouteManager />
-      </BrowserRouter>
-    </div>
+    <AppContext.Provider>
+      <div className="flex">
+        <BrowserRouter>
+          <RouteManager />
+        </BrowserRouter>
+      </div>
+    </AppContext.Provider>
   );
 }
 
