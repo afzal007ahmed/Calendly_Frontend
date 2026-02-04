@@ -28,7 +28,6 @@ const Register = () => {
 
   async function handleRegister() {
     try {
-      setLoading(true);
       const emailValidation = emailSchema.validate(details.email);
       const passwordValidation = passwordSchema.validate(details.password);
       const mail = details.email.split("@");
@@ -42,6 +41,7 @@ const Register = () => {
         toast.error(passwordValidation.error.message);
         return;
       }
+      setLoading(true);
       await registerService(details);
       setLoading(false);
       nav(routes.login);
@@ -53,8 +53,8 @@ const Register = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if( token ) {
-        nav(routes.scheduling) ;
+    if (token) {
+      nav(routes.scheduling);
     }
   }, []);
 
