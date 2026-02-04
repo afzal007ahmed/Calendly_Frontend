@@ -1,6 +1,6 @@
 export const routes = {
    scheduling : '/' ,
-   availability : "/availabily",
+   availability : "/availability",
    meetings : '/meetings',
    login : '/login'
 }
