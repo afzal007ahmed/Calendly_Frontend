@@ -7,6 +7,7 @@ import Meetings from "@/Pages/Meetings";
 import Login from "@/Pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import Register from "@/Pages/Register";
+import Redirect from "@/Pages/Redirect";
 
 const RouteManager = () => {
   return (
@@ -38,6 +39,7 @@ const RouteManager = () => {
       />
       <Route path={routes.login} element={<Login />} />
       <Route path={routes.register} element={<Register />} />
+      <Route path={routes.redirect} element={<Redirect/>} />
     </Routes>
   );
 };

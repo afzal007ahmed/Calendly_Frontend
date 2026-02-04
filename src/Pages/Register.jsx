@@ -110,6 +110,17 @@ const Register = () => {
         >
           {!loading ? "Register" : <Loader2 className="animate-spin" />}
         </Button>
+        <p className="text-sm mt-2">
+          Already have an account?{" "}
+          <span
+            className="underline font-bold text-blue-500 cursor-pointer"
+            onClick={() => {
+              nav(routes.login);
+            }}
+          >
+            Login
+          </span>
+        </p>
         <div className="flex items-center gap-2 mt-4">
           <div className="border mt-4 flex-1" style={{ marginTop: 0 }}></div>
           <p className="text-gray-400 font-bold">OR</p>
