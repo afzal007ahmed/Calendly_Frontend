@@ -1,4 +1,5 @@
 export const routes = {
+<<<<<<< HEAD
    scheduling : '/' ,
    availability : "/availability",
    meetings : '/meetings',
@@ -6,3 +7,11 @@ export const routes = {
 }
 
 
+=======
+  scheduling: "/",
+  availability: "/availability",
+  meetings: "/meetings",
+  login: "/login",
+  register: "/register",
+};
+>>>>>>> dev

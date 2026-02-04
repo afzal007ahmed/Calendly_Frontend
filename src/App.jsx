@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router";
+import { BrowserRouter } from "react-router-dom";
 import RouteManager from "./RouteManager/RouteManager";
 import { AppContext } from "./context/AppContext";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
@@ -18,7 +18,9 @@ function App() {
           {user.data && <AppSidebar />}
           <AuthProvider>
             <div className="flex-1 flex flex-col">
-              {user.data && <SidebarTrigger className="h-[30px] absolute top-0" />}
+              {user.data && (
+                <SidebarTrigger className="h-[30px] absolute top-0" />
+              )}
               {user.data && <Navbar />}
               <div className="bg-[#fafafa] flex-1 p-6">
                 <Toaster />

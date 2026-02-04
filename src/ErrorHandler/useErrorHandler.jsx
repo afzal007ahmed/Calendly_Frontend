@@ -32,6 +32,12 @@ const useErrorHandler = () => {
         return;
       }
     }
+    else if( error.response.status === 409 ) {
+        if (error.response.data.code === "USER_DUPLICATE") {
+        toast.error(error.response.data.message + " please login");
+        return;
+      }
+    }
   }
   return {
     errorHandler,
