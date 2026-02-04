@@ -87,6 +87,7 @@ const Login = () => {
         >
           {!loading ? "Login" : <Loader2 className="animate-spin" />}
         </Button>
+        <p className="text-sm mt-2">New here? <span className="underline font-bold text-blue-500 cursor-pointer" onClick={() => { nav(routes.register)}}>Register</span></p>
         <div className="flex items-center gap-2 mt-4">
           <div className="border mt-4 flex-1" style={{ marginTop: 0 }}></div>
           <p className="text-gray-400 font-bold">OR</p>

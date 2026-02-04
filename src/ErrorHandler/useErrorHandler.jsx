@@ -38,6 +38,12 @@ const useErrorHandler = () => {
         return;
       }
     }
+    else if( error.response.status === 403 ) {
+       if (error.response.data.code === "USER_PASSWORD_MISSING") {
+        toast.error(error.response.data.message + ". try login from google.");
+        return;
+      } 
+    }
   }
   return {
     errorHandler,
