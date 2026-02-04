@@ -1,10 +1,11 @@
 import useErrorHandler from '@/ErrorHandler/useErrorHandler';
-import { getAvailability } from '@/services/availability.services';
+import { getAvailability, saveAndUpdateAvailability } from '@/services/availability.services';
 import React, { useEffect, useState } from 'react'
 import { PiArrowsClockwiseLight } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { toast, useSonner } from 'sonner';
 
 const Availability = () => {
   const { errorHandler } = useErrorHandler();
@@ -28,7 +29,6 @@ const Availability = () => {
 
     const h = Math.floor(minutes/60);
     const m = minutes%60;
-    console.log(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
   }
 
@@ -75,6 +75,15 @@ const Availability = () => {
       }]
     }))
   }
+
+  async function saveAvailability() {
+    try {
+      await saveAndUpdateAvailability(availability); 
+      toast.info("Updated Availability!");
+    } catch {
+      toast.error("Failed to update availability.");
+    }
+}
 
   return (
     <div className='bg-white min-h-full px-10 py-6'>
@@ -148,7 +157,7 @@ const Availability = () => {
       className={`text-white rounded-xl px-4 py-2 font-semibold mt-10 text-sm
       ${ hasInvalidTime ? "bg-emerald-400 cursor-not-allowed" : "bg-violet-900 cursor-pointer" }
       `}
-
+      onClick={saveAvailability}
       >Save Changes</button>
     </div>
   )
