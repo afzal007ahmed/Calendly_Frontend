@@ -1,62 +1,90 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
 import EmptyState from "../CustomComponents/EmptyState";
 
 const Meetings = () => {
-  // Example meetings (later from API)
-  const meetings = [
-    {
-      id: 1,
-      name: "Sufyan",
-      date: "2026-02-05", // YYYY-MM-DD
-      time: "12:00 - 12:30",
-      timezone: "India, Sri Lanka Time",
-      type: "30 Minute Meeting",
-      hosts: "1 host | 0 non-hosts",
-      invitee: "Sufyan",
-      email: "sufyan@gmail.com",
-      hostName: "John Richard",
-      createdBy: "2 February 2026 by John Richard",
-    },
-
-    {
-      id: 2,
-      name: "Alex",
-      date: "2025-12-10", // Past meeting
-      time: "10:00 - 10:30",
-      timezone: "India, Sri Lanka Time",
-      type: "15 Minute Meeting",
-      hosts: "1 host",
-      invitee: "Alex",
-      email: "alex@gmail.com",
-      hostName: "John Richard",
-      createdBy: "10 December 2025 by John Richard",
-    },
-  ];
+  const [upcoming, setUpcoming] = useState([]);
+  const [past, setPast] = useState([]);
 
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [loading, setLoading] = useState(true);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-  // Today date (no time)
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  useEffect(() => {
+    fetchMeetings("upcoming");
+    fetchMeetings("past");
+  }, []);
 
-  // Convert string → Date
-  const getDate = (date) => new Date(date);
+  // Minutes to Time
+  const formatTime = (mins) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
 
-  // Filters
-  const upcoming = meetings.filter((m) => getDate(m.date) >= today);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
 
-  const past = meetings.filter((m) => getDate(m.date) < today);
+    return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
+  };
+
+  const fetchMeetings = async (type) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(`${BASE_URL}meetings?type=${type}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const json = res.data;
+
+      const formatted = json.data.map((item) => {
+        const booking = item.booking_id;
+        const guest = booking.guest[0];
+
+        return {
+          id: item._id,
+
+          name: guest?.name,
+
+          email: guest?.email,
+
+          note: guest?.note,
+
+          date: booking.date,
+
+          time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
+
+          timezone: "India Time",
+
+          type: booking.meeting_id,
+
+          hostId: booking.host_id,
+
+          createdBy: new Date(booking.createdAt).toDateString(),
+        };
+      });
+
+      if (json.type === "upcoming") {
+        setUpcoming(formatted);
+      } else {
+        setPast(formatted);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Meeting fetch error:", err);
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
-      {/* Title */}
       <h1 className="text-2xl font-semibold">Meetings</h1>
 
-      {/* Container */}
       <div className="border rounded-xl bg-white">
-        {/* Tabs */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div className="flex gap-6 text-sm font-medium">
             <button
@@ -80,26 +108,30 @@ const Meetings = () => {
             >
               Past
             </button>
-
-            <button className="text-muted-foreground">Date Range</button>
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" size="sm">
-              Export
-            </Button>
-
-            <Button variant="outline" size="sm">
-              Filter
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchMeetings(activeTab)}
+            >
+              Refresh
             </Button>
           </div>
         </div>
 
-        {/* Content */}
         <div>
+          {loading && (
+            <p className="py-10 text-center text-muted-foreground">
+              Loading meetings...
+            </p>
+          )}
+
           {/* Upcoming */}
-          {activeTab === "upcoming" &&
-            (upcoming.length > 0 ? (
+          {!loading &&
+            activeTab === "upcoming" &&
+            (upcoming.length ? (
               upcoming.map((m) => <MeetingItem key={m.id} meeting={m} />)
             ) : (
               <EmptyState
@@ -109,8 +141,9 @@ const Meetings = () => {
             ))}
 
           {/* Past */}
-          {activeTab === "past" &&
-            (past.length > 0 ? (
+          {!loading &&
+            activeTab === "past" &&
+            (past.length ? (
               past.map((m) => <MeetingItem key={m.id} meeting={m} />)
             ) : (
               <EmptyState
