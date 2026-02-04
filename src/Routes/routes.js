@@ -4,5 +4,6 @@ export const routes = {
   meetings: "/meetings",
   login: "/login",
   register: "/register",
-  redirect: "/redirect"
+  redirect: "/redirect",
+  profile:"/profile"
 };

@@ -8,6 +8,7 @@ import Login from "@/Pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import Register from "@/Pages/Register";
 import Redirect from "@/Pages/Redirect";
+import Profile from "@/Pages/Profile";
 
 const RouteManager = () => {
   return (
@@ -39,7 +40,15 @@ const RouteManager = () => {
       />
       <Route path={routes.login} element={<Login />} />
       <Route path={routes.register} element={<Register />} />
-      <Route path={routes.redirect} element={<Redirect/>} />
+      <Route path={routes.redirect} element={<Redirect />} />
+      <Route
+        path={routes.profile}
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };
