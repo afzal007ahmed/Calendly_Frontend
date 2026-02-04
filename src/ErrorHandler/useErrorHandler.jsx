@@ -9,6 +9,7 @@ const useErrorHandler = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
   function errorHandler(error) {
+    console.log(error);
     if (error.response.status === 401) {
       setUser(() => {
         localStorage.removeItem("token");
