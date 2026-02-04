@@ -5,15 +5,37 @@ import Scheduling from "@/Pages/Scheduling";
 import Availability from "@/Pages/Availability";
 import Meetings from "@/Pages/Meetings";
 import Login from "@/Pages/Login";
+import ProtectedRoute from "./ProtectedRoute";
 
 const RouteManager = () => {
   return (
     <Routes>
-      <Route path={routes.scheduling} element={<Scheduling />} />
+      <Route
+        path={routes.scheduling}
+        element={
+          <ProtectedRoute>
+            <Scheduling />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<PageNotFound />} />
-      <Route path={routes.availability} element={<Availability />} />
-      <Route path={routes.meetings} element={<Meetings />} />
-      <Route path={routes.login} element={<Login/>} />
+      <Route
+        path={routes.availability}
+        element={
+          <ProtectedRoute>
+            <Availability />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={routes.meetings}
+        element={
+          <ProtectedRoute>
+            <Meetings />
+          </ProtectedRoute>
+        }
+      />
+      <Route path={routes.login} element={<Login />} />
     </Routes>
   );
 };

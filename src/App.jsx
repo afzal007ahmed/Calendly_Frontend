@@ -5,21 +5,25 @@ import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import AppSidebar from "./sidebar/AppSidebar";
 import Navbar from "./navbar/Navbar";
 import AuthProvider from "./AuthProvider";
+import { Toaster } from "sonner";
+import { useState } from "react";
+import { routes } from "./Routes/routes";
 
 function App() {
-  // const token = localStorage.getItem("token");
-  const token = true;
-
+  const [user, setUser] = useState({ data: null, loading: false });
   return (
-    <AppContext.Provider value={{}}>
+    <AppContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <SidebarProvider>
-          {token && <AppSidebar />}
+          {user.data && <AppSidebar />}
           <AuthProvider>
             <div className="flex-1 flex flex-col">
-              {token && <SidebarTrigger className="h-[30px] absolute top-0" />}
-              {token && <Navbar />}
+              {user.data && (
+                <SidebarTrigger className="h-[30px] absolute top-0" />
+              )}
+              {user.data && <Navbar />}
               <div className="bg-[#fafafa] flex-1 p-6">
+                <Toaster />
                 <RouteManager />
               </div>
             </div>
