@@ -2,17 +2,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { AppContext } from "@/context/AppContext";
+import { useContext } from "react";
 
 const MeetingItem = ({ meeting }) => {
   const [open, setOpen] = useState(false);
+  const { user, setUser } = useContext(AppContext);
 
   return (
-    <div className="px-6 py-4 border-b">
-      {/* Main Row */}
-      <div className="grid grid-cols-12 items-center gap-4">
-        {/* Time */}
-        <div className="col-span-4 flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-purple-500" />
+    <div className="px-4 sm:px-6 py-4 border-b">
+      <div className="grid grid-cols-1 sm:grid-cols-12 items-start sm:items-center gap-4">
+        <div className="sm:col-span-4 flex gap-3">
+          <div className="w-10 h-10 rounded-full bg-purple-500 shrink-0" />
 
           <div>
             <p className="font-medium">{meeting.time}</p>
@@ -21,8 +22,7 @@ const MeetingItem = ({ meeting }) => {
           </div>
         </div>
 
-        {/* Info */}
-        <div className="col-span-5">
+        <div className="sm:col-span-5">
           <p className="font-medium">{meeting.name}</p>
 
           <p className="text-sm">
@@ -30,13 +30,11 @@ const MeetingItem = ({ meeting }) => {
           </p>
         </div>
 
-        {/* Hosts */}
-        <div className="col-span-2 text-sm text-muted-foreground">
+        <div className="sm:col-span-2 text-sm text-muted-foreground">
           {meeting.hosts}
         </div>
 
-        {/* Details */}
-        <div className="col-span-1 text-right">
+        <div className="sm:col-span-1 text-left sm:text-right">
           <button
             onClick={() => setOpen(!open)}
             className="flex items-center gap-1 text-sm text-blue-600"
@@ -47,32 +45,18 @@ const MeetingItem = ({ meeting }) => {
         </div>
       </div>
 
-      {/* Expand */}
       {open && (
         <div className="mt-6 border-t pt-6">
-          <div className="grid grid-cols-12 gap-6">
-            {/* Left */}
-            <div className="col-span-3 space-y-3">
-              <Button variant="outline" className="w-full">
-                Reschedule
-              </Button>
-
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-6">
+            <div className="sm:col-span-3 space-y-3">
               <Button variant="outline" className="w-full text-red-600">
                 Cancel
               </Button>
 
               <Separator />
-
-              <div className="space-y-2 text-sm text-blue-600">
-                <p>Edit Event Type</p>
-                <p>Filter by Event Type</p>
-                <p>Schedule Invitee Again</p>
-                <p>Report this event</p>
-              </div>
             </div>
 
-            {/* Middle */}
-            <div className="col-span-5 space-y-4">
+            <div className="sm:col-span-3 space-y-5 text-center">
               <div>
                 <p className="text-sm font-medium">INVITEE</p>
 
@@ -92,14 +76,13 @@ const MeetingItem = ({ meeting }) => {
               <div>
                 <p className="text-sm font-medium">MEETING NOTES</p>
 
-                <button className="text-sm text-blue-600">
-                  + Add meeting notes
+                <button className="text-sm text-muted-foreground">
+                  {meeting.note || "No notes"}
                 </button>
               </div>
             </div>
 
-            {/* Right */}
-            <div className="col-span-4 space-y-4">
+            <div className="sm:col-span-4 space-y-4 text-center sm:text-left">
               <div>
                 <p className="text-sm font-medium">MEETING HOST</p>
 
@@ -107,7 +90,7 @@ const MeetingItem = ({ meeting }) => {
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Host will attend this meeting
+                {user?.name || "Host"} will attend this meeting
               </p>
             </div>
           </div>
