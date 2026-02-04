@@ -1,6 +1,8 @@
-import React from 'react'
+import { AppContext } from '@/context/AppContext'
+import React, { useContext } from 'react'
 
 const Navbar = () => {
+    const { user } = useContext(AppContext) ;
   return (
     <div className='flex justify-end p-6'>
         <div className='border border-black rounded-4xl h-[40px] w-[40px] flex font-bold justify-center items-center'><p>P</p></div>
