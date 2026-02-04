@@ -10,3 +10,14 @@ export const getAvailability = async () => {
     })
     return response.data;
 }   
+
+export const saveAndUpdateAvailability = async (availability) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(config.availability,
+        availability, {
+        headers : {
+            Authorization : `Bearer ${token}`
+        }
+    })
+    return response.data;
+}
