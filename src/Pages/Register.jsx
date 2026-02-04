@@ -34,10 +34,13 @@ const Register = () => {
       const mail = details.email.split("@");
       if (emailValidation.error) {
         toast.error(emailValidation.error.message);
+        return;
       } else if (mail[1] !== "gmail.com") {
         toast.error("We accept only gmail accounts.");
+        return;
       } else if (passwordValidation.error) {
         toast.error(passwordValidation.error.message);
+        return;
       }
       await registerService(details);
       setLoading(false);
@@ -47,6 +50,13 @@ const Register = () => {
       errorHandler(error);
     }
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if( token ) {
+        nav(routes.scheduling) ;
+    }
+  }, []);
 
   return (
     <div className="min-h-full flex-1 flex flex-col flex-wrap justify-center items-center bg-[#f8f9fb] rounded-lg">
