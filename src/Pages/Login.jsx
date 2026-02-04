@@ -8,10 +8,11 @@ import { loginService } from "@/services/auth.services";
 import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 const Login = () => {
   const nav = useNavigate();
+  const token = localStorage.getItem("token");
   const { errorHandler } = useErrorHandler();
   const [details, setDetails] = useState({
     email: "",
@@ -22,6 +23,10 @@ const Login = () => {
     !details.password.trim().length || !details.email.trim().length;
 
   const { user, setUser } = useContext(AppContext);
+
+  if( token ) {
+    return <Navigate to={routes.scheduling} />
+  }
 
   async function loginHandler() {
     try {
@@ -39,10 +44,7 @@ const Login = () => {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      nav(routes.scheduling);
-    } else {
+    if (!token) {
       setUser({ data: null, loading: false });
     }
   }, []);
@@ -87,7 +89,17 @@ const Login = () => {
         >
           {!loading ? "Login" : <Loader2 className="animate-spin" />}
         </Button>
-        <p className="text-sm mt-2">New here? <span className="underline font-bold text-blue-500 cursor-pointer" onClick={() => { nav(routes.register)}}>Register</span></p>
+        <p className="text-sm mt-2">
+          New here?{" "}
+          <span
+            className="underline font-bold text-blue-500 cursor-pointer"
+            onClick={() => {
+              nav(routes.register);
+            }}
+          >
+            Register
+          </span>
+        </p>
         <div className="flex items-center gap-2 mt-4">
           <div className="border mt-4 flex-1" style={{ marginTop: 0 }}></div>
           <p className="text-gray-400 font-bold">OR</p>

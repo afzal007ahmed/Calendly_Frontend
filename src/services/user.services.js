@@ -10,3 +10,17 @@ export const userDetails = async () => {
   });
   return response.data;
 };
+
+export const userNameChange = async (name) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.put(
+    config.userNameUpdate,
+    { name: name },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return response.data;
+};

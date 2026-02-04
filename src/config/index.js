@@ -3,6 +3,7 @@ export const config = {
     login : import.meta.env.VITE_BASE_URL + 'auth/login'  ,
     register : import.meta.env.VITE_BASE_URL + 'auth/register',
     availability : import.meta.env.VITE_BASE_URL + 'availability',
-    google_redirect : import.meta.env.VITE_BASE_URL + 'google/login/auth'
+    google_redirect : import.meta.env.VITE_BASE_URL + 'google/login/auth',
+    userNameUpdate : import.meta.env.VITE_BASE_URL + 'user/name'
 }
 
