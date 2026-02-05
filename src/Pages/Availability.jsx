@@ -5,7 +5,7 @@ import { PiArrowsClockwiseLight } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { toast, useSonner } from 'sonner';
+import { toast } from 'sonner';
 
 const Availability = () => {
   const { errorHandler } = useErrorHandler();
@@ -13,16 +13,33 @@ const Availability = () => {
   const daysInAWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
   useEffect(() => {
-    async function getAvailabilityForUser(){
+    async function getAvailabilityForUser() {
       try {
         const response = await getAvailability();
-        setAvailability(response.data);
+        const validDays = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ];
+        const cleanedAvailability = {};
+        validDays.forEach(day => {
+          if (response.data?.[day]) {
+            cleanedAvailability[day] = response.data[day];
+          }
+        });
+        setAvailability(cleanedAvailability);
       } catch (error) {
-        errorHandler(error)
+        errorHandler(error);
       }
     }
-    getAvailabilityForUser()
-  }, []);
+    getAvailabilityForUser();
+}, []);
+
+
 
   function minutesToTime(minutes){
     if(minutes === null) return "";
@@ -78,12 +95,12 @@ const Availability = () => {
 
   async function saveAvailability() {
     try {
-      await saveAndUpdateAvailability(availability); 
+      await saveAndUpdateAvailability(availability);
       toast.info("Updated Availability!");
     } catch {
       toast.error("Failed to update availability.");
     }
-}
+  }
 
   return (
     <div className='bg-white min-h-full px-10 py-6'>
