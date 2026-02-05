@@ -8,9 +8,6 @@ const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AppContext);
   const token = localStorage.getItem("token");
 
-  if (!user.data || !token) {
-    return <Navigate to={routes.login} />;
-  }
   if (user.loading) {
     return (
       <div className="min-h-full flex items-center justify-center">
@@ -18,6 +15,11 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
+  
+  if (!user.data || !token) {
+    return <Navigate to={routes.login} />;
+  }
+
   return children;
 };
 

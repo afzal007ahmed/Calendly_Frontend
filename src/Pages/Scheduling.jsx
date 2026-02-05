@@ -1,8 +1,11 @@
+import ScheduleCreate from '@/CustomComponents/ScheduleCreate'
 import React from 'react'
 
 const Scheduling = () => {
   return (
-    <div>Scheduling</div>
+    <div>
+        <ScheduleCreate/>
+    </div>
   )
 }
 
