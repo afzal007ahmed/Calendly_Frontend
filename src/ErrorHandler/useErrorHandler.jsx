@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 const useErrorHandler = () => {
   const path = useLocation().pathname;
+  const token = localStorage.getItem("token")
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
   function errorHandler(error) {
@@ -42,6 +43,15 @@ const useErrorHandler = () => {
        if (error.response.data.code === "USER_PASSWORD_MISSING") {
         toast.error(error.response.data.message + ". try login from google.");
         return;
+      }
+      else if( error.response.data.code == "CALANDER_PERMISSION_MISSING") {
+        if( token ){
+            nav(routes.scheduling) ;
+        }
+        else{
+            nav(routes.login);
+        }
+        toast.error("Please check the box for calender permission.") ;
       } 
     }
   }
