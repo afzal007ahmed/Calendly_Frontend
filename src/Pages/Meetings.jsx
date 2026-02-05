@@ -3,6 +3,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
 import EmptyState from "../CustomComponents/EmptyState";
+import { fetchDetails } from "@/services/meeting.service";
 
 const Meetings = () => {
   const [upcoming, setUpcoming] = useState([]);
@@ -29,55 +30,42 @@ const Meetings = () => {
   };
 
   const fetchMeetings = async (type) => {
-    try {
-      const token = localStorage.getItem("token");
+    const json = await fetchDetails(type);
 
-      const res = await axios.get(`${BASE_URL}meetings?type=${type}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const formatted = json.data.map((item) => {
+      const booking = item.booking_id;
+      const guest = booking.guest[0];
 
-      const json = res.data;
+      return {
+        id: item._id,
 
-      const formatted = json.data.map((item) => {
-        const booking = item.booking_id;
-        const guest = booking.guest[0];
+        name: guest?.name,
 
-        return {
-          id: item._id,
+        email: guest?.email,
 
-          name: guest?.name,
+        note: guest?.note,
 
-          email: guest?.email,
+        date: booking.date,
 
-          note: guest?.note,
+        time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
 
-          date: booking.date,
+        timezone: "India Time",
 
-          time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
+        type: booking.meeting_id,
 
-          timezone: "India Time",
+        hostId: booking.host_id,
 
-          type: booking.meeting_id,
+        createdBy: new Date(booking.createdAt).toDateString(),
+      };
+    });
 
-          hostId: booking.host_id,
-
-          createdBy: new Date(booking.createdAt).toDateString(),
-        };
-      });
-
-      if (json.type === "upcoming") {
-        setUpcoming(formatted);
-      } else {
-        setPast(formatted);
-      }
-
-      setLoading(false);
-    } catch (err) {
-      console.error("Meeting fetch error:", err);
-      setLoading(false);
+    if (json.type === "upcoming") {
+      setUpcoming(formatted);
+    } else {
+      setPast(formatted);
     }
+
+    setLoading(false);
   };
 
   return (
