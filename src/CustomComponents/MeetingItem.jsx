@@ -90,7 +90,7 @@ const MeetingItem = ({ meeting }) => {
               </div>
 
               <p className="text-sm text-muted-foreground">
-                {user?.name || "Host"} will attend this meeting
+                {user?.data.name || "Host"} will attend this meeting
               </p>
             </div>
           </div>
