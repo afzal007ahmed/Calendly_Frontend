@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
 import EmptyState from "../CustomComponents/EmptyState";
+import { fetchDetails } from "@/services/meeting.service";
+import useErrorHandler from "@/ErrorHandler/useErrorHandler";
 
 const Meetings = () => {
   const [upcoming, setUpcoming] = useState([]);
   const [past, setPast] = useState([]);
-
+  const { errorHandler } = useErrorHandler();
   const [activeTab, setActiveTab] = useState("upcoming");
   const [loading, setLoading] = useState(true);
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     fetchMeetings("upcoming");
@@ -30,15 +30,7 @@ const Meetings = () => {
 
   const fetchMeetings = async (type) => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(`${BASE_URL}meetings?type=${type}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const json = res.data;
+      const json = await fetchDetails(type);
 
       const formatted = json.data.map((item) => {
         const booking = item.booking_id;
@@ -75,7 +67,7 @@ const Meetings = () => {
 
       setLoading(false);
     } catch (err) {
-      console.error("Meeting fetch error:", err);
+      errorHandler(err);
       setLoading(false);
     }
   };
