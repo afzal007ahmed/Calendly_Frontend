@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Register from "@/Pages/Register";
 import Redirect from "@/Pages/Redirect";
 import Profile from "@/Pages/Profile";
+import Public from "@/Pages/Public";
 
 const RouteManager = () => {
   return (
@@ -49,6 +50,7 @@ const RouteManager = () => {
           </ProtectedRoute>
         }
       />
+      <Route path={routes.public} element={<Public/>}/>
     </Routes>
   );
 };
