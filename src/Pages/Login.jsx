@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { config } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import GoogleButton from "@/CustomComponents/GoogleButton";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
 import { loginService } from "@/services/auth.services";
 import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 
 const Login = () => {
   const nav = useNavigate();
@@ -24,8 +25,14 @@ const Login = () => {
 
   const { user, setUser } = useContext(AppContext);
 
-  if( token ) {
-    return <Navigate to={routes.scheduling} />
+  const [searchParams] = useSearchParams();
+  const message = searchParams.get("message");
+  if (message) {
+    toast.error(message);
+  }
+
+  if (token) {
+    return <Navigate to={routes.scheduling} />;
   }
 
   async function loginHandler() {
@@ -105,7 +112,7 @@ const Login = () => {
           <p className="text-gray-400 font-bold">OR</p>
           <div className=" border mt-4 flex-1" style={{ marginTop: 0 }}></div>
         </div>
-        <GoogleButton />
+        <GoogleButton route={config.google_redirect} />
       </div>
     </div>
   );

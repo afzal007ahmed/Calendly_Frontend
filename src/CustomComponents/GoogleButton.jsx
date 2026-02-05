@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { config } from "@/config";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import React from "react";
 
-const GoogleButton = () => {
+const GoogleButton = ({ route }) => {
   const { errorHandler } = useErrorHandler();
 
   const handleClick = async () => {
     try {
-        window.location.href = config.google_redirect ;
+        window.location.href = route ;
     } catch (error) {
       errorHandler(error);
     }

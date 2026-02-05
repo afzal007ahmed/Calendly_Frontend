@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { userNameChange } from "@/services/user.services";
 
 const Profile = () => {

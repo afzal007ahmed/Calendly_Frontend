@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
 import EmptyState from "../CustomComponents/EmptyState";
 import { fetchDetails } from "@/services/meeting.service";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 
 const Meetings = () => {
   const [upcoming, setUpcoming] = useState([]);

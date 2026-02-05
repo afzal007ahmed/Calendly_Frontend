@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
   
-  if (!user.data || !token) {
+  if (!token) {
     return <Navigate to={routes.login} />;
   }
 

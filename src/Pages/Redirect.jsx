@@ -1,5 +1,5 @@
 import { AppContext } from "@/context/AppContext";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
 import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";

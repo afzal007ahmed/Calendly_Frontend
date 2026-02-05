@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppContext } from "@/context/AppContext";
 import GoogleButton from "@/CustomComponents/GoogleButton";
-import useErrorHandler from "@/ErrorHandler/useErrorHandler";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
 import { loginService, registerService } from "@/services/auth.services";
 import { userDetails } from "@/services/user.services";

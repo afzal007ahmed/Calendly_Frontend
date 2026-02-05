@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { userDetails } from "./services/user.services";
-import useErrorHandler from "./ErrorHandler/useErrorHandler";
+import useErrorHandler from "./hooks/ErrorHandler/useErrorHandler";
 import { AppContext } from "./context/AppContext";
 
 const AuthProvider = ({ children }) => {

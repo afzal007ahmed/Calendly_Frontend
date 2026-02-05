@@ -1,4 +1,4 @@
-import useErrorHandler from '@/ErrorHandler/useErrorHandler';
+import useErrorHandler from '@/hooks/ErrorHandler/useErrorHandler';
 import { getAvailability, saveAndUpdateAvailability } from '@/services/availability.services';
 import React, { useEffect, useState } from 'react'
 import { PiArrowsClockwiseLight } from "react-icons/pi";

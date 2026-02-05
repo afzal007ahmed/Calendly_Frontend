@@ -10,3 +10,8 @@ export const getSchedules = async () => {
     })
     return response.data;
 }   
+
+
+export const createSchedule = async( body ) => {
+   const token = localStorage.getItem("token") ;
+}
