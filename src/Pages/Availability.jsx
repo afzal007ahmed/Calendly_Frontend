@@ -32,12 +32,12 @@ const Availability = () => {
           }
         });
         setAvailability(cleanedAvailability);
-      } catch (error) {
-        errorHandler(error);
+        } catch (error) {
+          errorHandler(error);
+        }
       }
-    }
-    getAvailabilityForUser();
-}, []);
+      getAvailabilityForUser();
+  }, []);
 
 
 
