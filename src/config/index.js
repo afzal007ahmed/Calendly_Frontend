@@ -5,6 +5,8 @@ export const config = {
   availability: import.meta.env.VITE_BASE_URL + "availability",
   google_redirect: import.meta.env.VITE_BASE_URL + "google/login/auth",
   userNameUpdate: import.meta.env.VITE_BASE_URL + "user/name",
+  schedules : import.meta.env.VITE_BASE_URL + 'schedules',
   meetingDetail: (type) =>
     import.meta.env.VITE_BASE_URL + `meetings?type=${type}`,
-};
+    
+}
