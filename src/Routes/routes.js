@@ -7,3 +7,4 @@ export const routes = {
   redirect: "/redirect",
   profile:"/profile"
 };
+

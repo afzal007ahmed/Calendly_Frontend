@@ -21,3 +21,4 @@ export const saveAndUpdateAvailability = async (availability) => {
     })
     return response.data;
 }
+
