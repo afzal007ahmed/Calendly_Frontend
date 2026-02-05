@@ -5,11 +5,7 @@ import { PiArrowsClockwiseLight } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
-<<<<<<< HEAD
-import { toast, useSonner } from 'sonner';
-=======
 import { toast } from 'sonner';
->>>>>>> feat-availability
 
 const Availability = () => {
   const { errorHandler } = useErrorHandler();
