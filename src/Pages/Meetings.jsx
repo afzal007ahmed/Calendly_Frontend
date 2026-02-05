@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
+import useErrorHandler from "@/ErrorHandler/useErrorHandler";
 import EmptyState from "../CustomComponents/EmptyState";
 import { fetchDetails } from "@/services/meeting.service";
+const { errorHandler } = useErrorHandler();
 
 const Meetings = () => {
   const [upcoming, setUpcoming] = useState([]);
@@ -11,7 +12,6 @@ const Meetings = () => {
 
   const [activeTab, setActiveTab] = useState("upcoming");
   const [loading, setLoading] = useState(true);
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     fetchMeetings("upcoming");
@@ -30,42 +30,47 @@ const Meetings = () => {
   };
 
   const fetchMeetings = async (type) => {
-    const json = await fetchDetails(type);
+    try {
+      const json = await fetchDetails(type);
 
-    const formatted = json.data.map((item) => {
-      const booking = item.booking_id;
-      const guest = booking.guest[0];
+      const formatted = json.data.map((item) => {
+        const booking = item.booking_id;
+        const guest = booking.guest[0];
 
-      return {
-        id: item._id,
+        return {
+          id: item._id,
 
-        name: guest?.name,
+          name: guest?.name,
 
-        email: guest?.email,
+          email: guest?.email,
 
-        note: guest?.note,
+          note: guest?.note,
 
-        date: booking.date,
+          date: booking.date,
 
-        time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
+          time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
 
-        timezone: "India Time",
+          timezone: "India Time",
 
-        type: booking.meeting_id,
+          type: booking.meeting_id,
 
-        hostId: booking.host_id,
+          hostId: booking.host_id,
 
-        createdBy: new Date(booking.createdAt).toDateString(),
-      };
-    });
+          createdBy: new Date(booking.createdAt).toDateString(),
+        };
+      });
 
-    if (json.type === "upcoming") {
-      setUpcoming(formatted);
-    } else {
-      setPast(formatted);
+      if (json.type === "upcoming") {
+        setUpcoming(formatted);
+      } else {
+        setPast(formatted);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      errorHandler(err);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
