@@ -1,16 +1,146 @@
-# React + Vite
+# Calendly_Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for a Calendly-like scheduling application. Built with React and Vite, this project provides pages and UI for user authentication, creating schedules and availabilities, listing meetings, and a public scheduling flow.
 
-Currently, two official plugins are available:
+## Folder Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+    ├── App.css
+    ├── App.jsx
+    ├── assets
+    │   └── react.svg
+    ├── AuthProvider.jsx
+    ├── components
+    │   └── ui
+    │       ├── avatar.jsx
+    │       ├── badge.jsx
+    │       ├── button.jsx
+    │       ├── card.jsx
+    │       ├── drawer.jsx
+    │       ├── input.jsx
+    │       ├── popover.jsx
+    │       ├── select.jsx
+    │       ├── separator.jsx
+    │       ├── sheet.jsx
+    │       ├── sidebar.jsx
+    │       ├── skeleton.jsx
+    │       ├── tabs.jsx
+    │       └── tooltip.jsx
+    ├── config
+    │   └── index.js
+    ├── context
+    │   └── AppContext.jsx
+    ├── CustomComponents
+    │   ├── AvailibilityList.jsx
+    │   ├── EmptyState.jsx
+    │   ├── GoogleButton.jsx
+    │   ├── MeetingItem.jsx
+    │   ├── ScheduleCreate.jsx
+    │   ├── ScheduleDrawer.jsx
+    │   ├── ScheduleDrawerSection.jsx
+    │   └── ScheduleListing.jsx
+    ├── hooks
+    │   ├── ErrorHandler
+    │   │   └── useErrorHandler.jsx
+    │   └── use-mobile.js
+    ├── index.css
+    ├── lib
+    │   └── utils.js
+    ├── main.jsx
+    ├── navbar
+    │   └── Navbar.jsx
+    ├── Pages
+    │   ├── Availability.jsx
+    │   ├── Home.jsx
+    │   ├── Login.jsx
+    │   ├── Meetings.jsx
+    │   ├── PageNotFound.jsx
+    │   ├── Profile.jsx
+    │   ├── Public.jsx
+    │   ├── Redirect.jsx
+    │   ├── Register.jsx
+    │   └── Scheduling.jsx
+    ├── redux
+    │   ├── availabilitySlice.js
+    │   ├── meetingSlice.js
+    │   ├── scheduleSlice.js
+    │   └── store.js
+    ├── RouteManager
+    │   ├── ProtectedRoute.jsx
+    │   └── RouteManager.jsx
+    ├── Routes
+    │   └── routes.js
+    ├── services
+    │   ├── auth.services.js
+    │   ├── availability.services.js
+    │   ├── meeting.service.js
+    │   ├── schedule.services.js
+    │   └── user.services.js
+    ├── sidebar
+    │   └── AppSidebar.jsx
+    └── validations
+        └── joi.validate.js
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User authentication (email/password + Google OAuth button)
+- Schedule creation and management
+- Availability management
+- Meeting booking and listing
+- Redux Toolkit for client state (schedules, availability, meetings)
+- Design-system primitives under `src/components/ui`
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React (JSX)
+- Vite
+- Redux Toolkit
+- React Router
+- Joi (form validation)
+- ESLint
+
+## Quick start
+
+From the project root (`Calendly_Frontend/`):
+
+# install dependencies
+
+npm install
+
+# start dev server (Vite)
+
+npm run dev
+
+# build for production
+
+npm run build
+
+## Environment / configuration
+
+- The frontend expects a backend API. Check `src/config/index.js` for configuration. Typical values you may need to set in your environment or in .env file:
+
+- API_BASE_URL — base URL of your backend API
+
+- If tokens or cookies are used by `AuthProvider.jsx`, ensure the backend CORS and cookie settings allow the frontend origin.
+
+## Project structure (important parts)
+
+- `src/main.jsx` — app entry, mounts React and registers providers (Auth, Redux store, App context)
+- `src/App.jsx` — app-level layout and primary router outlet
+- `src/RouteManager/` — route wiring and `ProtectedRoute` component
+- `src/Pages/` — route-level pages: `Home`, `Login`, `Register`, `Availability`, `Meetings`, `Scheduling`, `Profile`, `Public`, etc.
+- `src/CustomComponents/` — scheduling components and UI composites (ScheduleCreate, ScheduleDrawer, MeetingItem, GoogleButton, etc.)
+- `src/components/ui/` — design-system primitives (button, input, card, popover...)
+- `src/redux/` — Redux Toolkit store and slices (`availabilitySlice`, `meetingSlice`, `scheduleSlice`)
+- `src/services/` — API client wrappers for auth, schedules, availability, meetings, and user
+- `src/validations/joi.validate.js` — Joi schemas and helpers used for form validation
+
+## Authentication
+
+Authentication is handled by `src/AuthProvider.jsx` and `src/services/auth.services.js`. `AuthProvider` exposes user state and login/logout helpers and is used by `ProtectedRoute.jsx` to guard private pages. Google sign-in is exposed via `src/CustomComponents/GoogleButton.jsx`.
+
+## State & data flow
+
+- UI actions call functions from `src/services/*` to send HTTP requests to the backend.
+- Responses are fed into Redux slices or local component state.
+- Redux contains the canonical client state for schedules, availability, and meetings.
+- The app uses `src/context/AppContext.jsx` for UI-level cross-cutting state not stored in Redux.
