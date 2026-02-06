@@ -30,7 +30,7 @@ import {
   scheduleError,
   scheduleSuccess,
 } from "@/redux/ScheduleSlice";
-const ScheduleDrawer = ({ children, type }) => {
+const ScheduleDrawer = ({ type, open, setOpen }) => {
   const { user } = useContext(AppContext);
   const dispatch = useDispatch();
   const [select, setSelect] = useState(false);
@@ -99,6 +99,7 @@ const ScheduleDrawer = ({ children, type }) => {
       limit: type == "group" ? 2 : null,
       host: user.data.name,
       duration_unit: "min",
+      type: type,
     });
   }
 
@@ -119,6 +120,7 @@ const ScheduleDrawer = ({ children, type }) => {
       dispatch(scheduleSuccess(response));
       toast.success("Schedule created.");
       setLoading(false);
+      setOpen((prev) => ({ ...prev, [type]: !prev[type] }));
     } catch (error) {
       dispatch(scheduleError());
       setLoading(false);
@@ -141,13 +143,14 @@ const ScheduleDrawer = ({ children, type }) => {
 
   return (
     <Sheet
-      onOpenChange={(open) => {
-        if (!open) {
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) {
           reset();
         }
+        setOpen((prev) => ({ ...prev, [type]: value }));
       }}
     >
-      <SheetTrigger className="w-full text-start">{children}</SheetTrigger>
       <SheetContent>
         <SheetHeader className="gap-0">
           <p className="text-sm font-bold text-gray-500">Event type</p>
