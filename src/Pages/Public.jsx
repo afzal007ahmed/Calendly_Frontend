@@ -1,7 +1,12 @@
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { getBooking } from "@/services/booking.services";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
@@ -11,8 +16,8 @@ const Public = () => {
   const [details, setDetails] = useState({});
   const { errorHandler } = useErrorHandler();
   const [date, setDate] = useState(new Date());
-  // const [selected, setSelected] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const navigate = useNavigate();
 
   const weekdays = [
     "Sunday",
@@ -61,8 +66,8 @@ const Public = () => {
   const host = details?.host;
   const schedule = details?.schedule;
   const availability = details?.availability;
-  // const bookings = details?.bookings;
-  // const today = new Date().getDate();
+
+  const allowedDays = availability?.map((a) => a.day);
 
   const minutesToTime = (minutes) => {
     let hrs = Math.floor(minutes / 60);
@@ -86,51 +91,86 @@ const Public = () => {
     }
     setSlots([]);
 
-    for (let start=dayAvailability.from;start+duration<=dayAvailability.to;start+=duration) {
+    for (
+      let start = dayAvailability.from;
+      start + duration <= dayAvailability.to;
+      start += duration
+    ) {
       setSlots((prev) => [...prev, minutesToTime(start)]);
     }
   }
 
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  console.log();
+
+  function confirmPage() {
+    const params = new URLSearchParams(searchParams);
+    params.set("month", `${String(date.getMonth() + 1).padStart(2, "0")}`);
+    params.set("date", new Date(date));
+    navigate(`${location.pathname}/confirm?${params.toString()}`);
+  }
+
   return (
     <div className="flex justify-center items-center h-full">
-      <div className="bg-white w-240 h-140 rounded-2xl shadow-xl flex gap-4">
-        <div className="w-[25%] flex flex-col justify-start items-start p-8 pr-0 gap-8">
+      <div className="bg-white w-220 h-140 rounded-2xl shadow-xl flex gap-4">
+        <div className="w-[25%] flex flex-col justify-start items-start p-8 gap-8">
           <div className="flex flex-col mt-2">
             <p className="text-lg font-semibold opacity-45">{host?.name}</p>
             <p className="text-2xl font-bold">{schedule?.meeting_name}</p>
           </div>
           <div className="flex gap-2 items-center">
             <AiOutlineFieldTime className="text-2xl opacity-60" />
-            <p className="text-sm font-semibold opacity-45">{schedule?.duration} min</p>
+            <p className="text-sm font-semibold opacity-45">
+              {schedule?.duration} min
+            </p>
           </div>
         </div>
         <div className="bg-[#1A1A1A] w-0.5 h-full opacity-25"></div>
-        <div className="flex flex-col items-center gap-8 p-6">
+        <div className="flex flex-col items-center gap-8 p-6 mt-4">
           <p className="text-2xl font-bold opacity-75">Select a Date & Time</p>
           <Calendar
             mode="single"
             selected={date}
             onSelect={(selectedDate) => {
               if (!selectedDate) return;
-              const todayDate = new Date();
-              todayDate.setHours(0, 0, 0, 0);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
               const picked = new Date(selectedDate);
               picked.setHours(0, 0, 0, 0);
 
-              if (picked >= todayDate) {
-                setDate(selectedDate);
-                generateSlots(selectedDate);
-              } else {
-                toast.info("Select today or later dates!");
+              const weekdayName = weekdays[picked.getDay()];
+              const isAvailable = allowedDays?.includes(weekdayName);
+
+              if (!isAvailable || picked < today) {
+                toast.info(
+                  "Please select available days!",
+                );
+                return;
               }
+              setDate(selectedDate);
+              generateSlots(selectedDate);
             }}
-            className="rounded-lg border w-full p-4"
             captionLayout="dropdown"
+            className="rounded-2xl border w-full p-4"
+            modifiers={{
+              available: (day) => allowedDays?.includes(weekdays[day.getDay()]),
+              unavailable : (day) => !allowedDays?.includes(weekdays[day.getDay()]),
+            }}
+            modifiersClassNames={{
+              available: "text-white font-extrabold bg-[#1A1A1A]/40 rounded-2xl",
+              today: "border rounded-2xl font-semibold",
+              unavailable : "text-black font-extrabold rounded-2xl"
+            }}
+            classNames={{
+              day: "h-7 w-7 m-1 flex items-center justify-center rounded-2xl",
+            }}
           />
         </div>
-        <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden">
+        <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
           <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 w-full">
             {slots.map((slot) => (
               <div key={slot} className="flex w-60 gap-1">
                 <p
@@ -140,7 +180,9 @@ const Public = () => {
                   {slot}
                 </p>
                 {selectedSlot === slot && (
-                  <button className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1"
+                  <button
+                    className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1 hover:bg-[#1A1A1A]/80 cursor-pointer"
+                    onClick={() => confirmPage()}
                   >
                     Next
                   </button>
