@@ -5,7 +5,7 @@ export const routes = {
   login: "/login",
   register: "/register",
   redirect: "/redirect",
-  profile:"/profile",
-  public : "/book/:username/:hostid/:scheduleid"
+  profile: "/profile",
+  booking : "/book/:username/:userId/:scheduleId",
+  confirm: "/book/:username/:hostid/:scheduleid/confirm",
 };
-
