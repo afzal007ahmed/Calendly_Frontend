@@ -24,7 +24,7 @@ const ScheduleListing = ( { schedules } ) => {
                             <p className='font-extrabold'>{schedule.meeting_name}</p>
                             <div>
                                 {/* icon */}
-                                <p className='text-sm opacity-55'>{schedule.duration}min, {schedule.type_of_meeting}</p>
+                                <p className='text-sm opacity-55'>{schedule.duration} min, {schedule.type_of_meeting==="one" ? "One-to-one meeting": "Group meeting"}</p>
                             </div>
                             <p className='text-sm opacity-55'>
                                 {
