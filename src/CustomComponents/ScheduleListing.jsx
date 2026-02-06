@@ -25,7 +25,7 @@ const ScheduleListing = ({ schedules }) => {
                 <div>
                   {/* icon */}
                   <p className="text-sm opacity-55">
-                    {schedule.duration}min, {schedule.type_of_meeting}
+                    {schedule.duration} min, {schedule.type_of_meeting==="one" ? "One-to-one meeting": "Group meeting"}
                   </p>
                 </div>
                 <p className="text-sm opacity-55">
