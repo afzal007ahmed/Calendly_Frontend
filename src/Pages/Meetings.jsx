@@ -24,9 +24,8 @@ const Meetings = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
 
   useEffect(() => {
-    fetchMeetings("upcoming");
-    fetchMeetings("past");
-  }, []);
+    fetchMeetings(activeTab);
+  }, [activeTab]);
 
   // Minutes to Time
   const formatTime = (mins) => {
