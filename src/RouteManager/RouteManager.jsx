@@ -50,7 +50,7 @@ const RouteManager = () => {
           </ProtectedRoute>
         }
       />
-      <Route path={routes.public} element={<Public/>}/>
+      <Route path={routes.booking} element={<Public />}/>
     </Routes>
   );
 };
