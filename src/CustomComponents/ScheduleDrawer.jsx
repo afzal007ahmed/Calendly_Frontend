@@ -23,9 +23,18 @@ import AvailibilityList from "./AvailibilityList";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { createSchedule, getSchedules } from "@/services/schedule.services";
+import { useDispatch } from "react-redux";
+import {
+  fetchSchedules,
+  scheduleError,
+  scheduleSuccess,
+} from "@/redux/ScheduleSlice";
 const ScheduleDrawer = ({ children, type }) => {
   const { user } = useContext(AppContext);
+  const dispatch = useDispatch();
   const [select, setSelect] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { errorHandler } = useErrorHandler();
   const [details, setDetails] = useState({
     title: "New Meeting",
@@ -33,6 +42,7 @@ const ScheduleDrawer = ({ children, type }) => {
     duration_custom: false,
     availability: null,
     limit: type == "group" ? 2 : null,
+    type: type,
     host: user.data.name,
     duration_unit: "min",
   });
@@ -94,14 +104,25 @@ const ScheduleDrawer = ({ children, type }) => {
 
   async function addSchedule() {
     try {
-        if( details.duration <= 0 || (details.duration_unit === "hrs" && details.duration > 12) || ( details.duration > 720) ){
-            toast.error("Please provide a valid duration.");
-            return ;
-        }
-       
-
+      setLoading(true);
+      if (
+        details.duration <= 0 ||
+        (details.duration_unit === "hrs" && details.duration > 12) ||
+        details.duration > 720
+      ) {
+        toast.error("Please provide a valid duration.");
+        return;
+      }
+      await createSchedule(details);
+      dispatch(fetchSchedules());
+      const response = await getSchedules();
+      dispatch(scheduleSuccess(response));
+      toast.success("Schedule created.");
+      setLoading(false);
     } catch (error) {
-        
+      dispatch(scheduleError());
+      setLoading(false);
+      errorHandler(error);
     }
   }
 
@@ -247,7 +268,10 @@ const ScheduleDrawer = ({ children, type }) => {
             <hr />
           </div>
           <div className="text-end">
-            <Button className=" rounded-full bg-[#006bff] font-bold" onClick={addSchedule}>
+            <Button
+              className=" rounded-full bg-[#006bff] font-bold"
+              onClick={addSchedule}
+            >
               <Plus />
               <p>Create</p>
             </Button>

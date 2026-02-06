@@ -9,5 +9,6 @@ export const config = {
   google_redirect_login: (token) => import.meta.env.VITE_BASE_URL+ 'google/connect/auth' + `?token=${token}` ,
   meetingDetail: (type) =>
     import.meta.env.VITE_BASE_URL + `meetings?type=${type}`,
+  
     
 }
