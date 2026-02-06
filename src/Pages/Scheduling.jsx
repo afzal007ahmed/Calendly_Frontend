@@ -3,7 +3,7 @@ import GoogleButton from '@/CustomComponents/GoogleButton';
 import ScheduleCreate from '@/CustomComponents/ScheduleCreate';
 import ScheduleListing from '@/CustomComponents/ScheduleListing'
 import useErrorHandler from '@/hooks/ErrorHandler/useErrorHandler';
-import { fetchSchedules, scheduleError, scheduleSuccess } from '@/redux/ScheduleSlice';
+import { fetchSchedules, scheduleError, scheduleSuccess } from '@/redux/scheduleSlice';
 import { getSchedules } from '@/services/schedule.services';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ const Scheduling = () => {
   if( message) {
     toast.error(message) ;
   }
-  const schedules = useSelector(( state ) => state.ScheduleSlice) ;
+  const schedules = useSelector(( state ) => state.ScheduleReducer) ;
   const [ googleCalenderMissing , setGoogleCalenderMissing ] = useState(false);
 
     useEffect(() => {
@@ -46,7 +46,6 @@ const Scheduling = () => {
         getSchedulesForUser();
   }, []);
 
-  console.log( schedules)
   return (
     <div>
       { googleCalenderMissing ? <GoogleButton route={config.google_redirect_login(token)}/> : <ScheduleCreate/>}

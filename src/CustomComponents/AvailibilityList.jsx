@@ -1,6 +1,10 @@
+
+import { routes } from "@/Routes/routes";
 import React from "react";
+import { useNavigate } from "react-router";
 
 const AvailibilityList = ({ data }) => {
+    const nav = useNavigate() ;
   const order = [
     "Sunday",
     "Monday",
@@ -13,6 +17,7 @@ const AvailibilityList = ({ data }) => {
   return (
     <div>
       <div className="bg-[#fafafa] mt-6 p-8">
+        <div className=" w-fit ml-auto" onClick={() => nav(routes.availability)}><p className="p-1 font-bold cursor-pointer text-sm text-blue-500"> Edit</p></div>
         {order.map((item) => {
           if (!data[item]) return null;
           const timeIntervalFrom = data[item][0].from / 60 > 12 ? "pm" : "am";

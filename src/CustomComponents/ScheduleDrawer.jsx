@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -17,20 +12,26 @@ import { Input } from "@/components/ui/input";
 import { AppContext } from "@/context/AppContext";
 import { getAvailability } from "@/services/availability.services";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
-import { ChevronDown, Clock, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import ScheduleDrawerSection from "./ScheduleDrawerSection";
 import AvailibilityList from "./AvailibilityList";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { createSchedule, getSchedules } from "@/services/schedule.services";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSchedules,
   scheduleError,
   scheduleSuccess,
-} from "@/redux/ScheduleSlice";
+} from "@/redux/scheduleSlice";
+import {
+  availabilityError,
+  availabilitySuccess,
+  fetchAvailabilityState,
+} from "@/redux/availabilitySlice";
 const ScheduleDrawer = ({ type, open, setOpen }) => {
+  const availability = useSelector((state) => state.availabilityReducer);
   const { user } = useContext(AppContext);
   const dispatch = useDispatch();
   const [select, setSelect] = useState(false);
@@ -40,7 +41,7 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
     title: "New Meeting",
     duration: 15,
     duration_custom: false,
-    availability: null,
+    availability: availability.data,
     limit: type == "group" ? 2 : null,
     type: type,
     host: user.data.name,
@@ -48,7 +49,9 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
   });
 
   const availSub = useMemo(() => {
-    let sub = "";
+    if (availability.loading) return "Loading...";
+    if (!availability.data) return "";
+
     const order = [
       "Sunday",
       "Monday",
@@ -58,44 +61,33 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
       "Friday",
       "Saturday",
     ];
-    if (details.availability) {
-      order.map((item) => {
-        if (details.availability?.[item]?.[0]) {
-          const timeIntervalFrom =
-            details.availability[item][0].from / 60 > 12 ? "PM" : "AM";
-          const timeIntervalTo =
-            details.availability[item][0].to / 60 > 12 ? "PM" : "AM";
-          const fromMinutes =
-            details.availability[item][0].from % 60 < 10
-              ? `0${details.availability[item][0].from % 60}`
-              : details.availability[item][0].from % 60;
-          const toMinutes =
-            details.availability[item][0].to % 60 < 10
-              ? `0${details.availability[item][0].to % 60}`
-              : details.availability[item][0].to % 60;
-          const fromHours =
-            Math.floor(details.availability[item][0].from / 60) % 12 === 0
-              ? 12
-              : Math.floor(details.availability[item][0].from / 60) % 12;
-          const toHours =
-            Math.floor(details.availability[item][0].to / 60) % 12 === 0
-              ? 12
-              : Math.floor(details.availability[item][0].to / 60) % 12;
-          sub +=
-            item +
-            ` ${fromHours}:${fromMinutes}${timeIntervalFrom} -${toHours}:${toMinutes}${timeIntervalTo} `;
-        }
-      });
-    }
+
+    let sub = "";
+
+    order.forEach((day) => {
+      const slot = availability.data?.[day]?.[0];
+      if (!slot) return;
+
+      const fromH = Math.floor(slot.from / 60) % 12 || 12;
+      const fromM = String(slot.from % 60).padStart(2, "0");
+      const fromAMPM = slot.from / 60 >= 12 ? "PM" : "AM";
+
+      const toH = Math.floor(slot.to / 60) % 12 || 12;
+      const toM = String(slot.to % 60).padStart(2, "0");
+      const toAMPM = slot.to / 60 >= 12 ? "PM" : "AM";
+
+      sub += `${day} ${fromH}:${fromM}${fromAMPM} - ${toH}:${toM}${toAMPM} `;
+    });
+
     return sub;
-  }, [details.availability]);
+  }, [availability.data, availability.loading]);
 
   function reset() {
     setDetails({
       title: "New Meeting",
       duration: 15,
       duration_custom: false,
-      availability: null,
+      availability: availability.data,
       limit: type == "group" ? 2 : null,
       host: user.data.name,
       duration_unit: "min",
@@ -130,10 +122,12 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
 
   async function fetchAvailability() {
     try {
+      dispatch(fetchAvailabilityState());
       const data = await getAvailability();
-      setDetails((prev) => ({ ...prev, availability: data.data }));
+      dispatch(availabilitySuccess(data));
     } catch (error) {
       errorHandler(error);
+      dispatch(availabilityError());
     }
   }
 
@@ -248,8 +242,10 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
             </ScheduleDrawerSection>
             <hr />
             <ScheduleDrawerSection title="Availability" subTitle={availSub}>
-              {details.availability && (
-                <AvailibilityList data={details.availability} />
+              {availability.loading && <Loader2 className="animate-spin" />}
+
+              {availability.data && !availability.loading && (
+                <AvailibilityList data={availability.data} />
               )}
             </ScheduleDrawerSection>
             <hr />
@@ -275,8 +271,15 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
               className=" rounded-full bg-[#006bff] font-bold"
               onClick={addSchedule}
             >
-              <Plus />
-              <p>Create</p>
+              {" "}
+              {loading ? (
+                <Loader2 className="animate-spin"/>
+              ) : (
+                <>
+                  <Plus />
+                  <p>Create</p>
+                </>
+              )}
             </Button>
           </div>
         </div>
