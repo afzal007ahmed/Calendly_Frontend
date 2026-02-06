@@ -2,15 +2,26 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import MeetingItem from "../CustomComponents/MeetingItem";
 import EmptyState from "../CustomComponents/EmptyState";
+
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  meetingStart,
+  meetingSuccess,
+  meetingError,
+} from "@/redux/meetingSlice";
+
 import { fetchDetails } from "@/services/meeting.service";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 
 const Meetings = () => {
-  const [upcoming, setUpcoming] = useState([]);
-  const [past, setPast] = useState([]);
+  const dispatch = useDispatch();
+
+  const { upcoming, past, loading } = useSelector((state) => state.meeting);
+
   const { errorHandler } = useErrorHandler();
+
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchMeetings("upcoming");
@@ -30,6 +41,8 @@ const Meetings = () => {
 
   const fetchMeetings = async (type) => {
     try {
+      dispatch(meetingStart());
+
       const json = await fetchDetails(type);
 
       const formatted = json.data.map((item) => {
@@ -38,37 +51,28 @@ const Meetings = () => {
 
         return {
           id: item._id,
-
           name: guest?.name,
-
           email: guest?.email,
-
           note: guest?.note,
-
           date: booking.date,
-
           time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
-
           timezone: "India Time",
-
           type: booking.meeting_id,
-
           hostId: booking.host_id,
-
           createdBy: new Date(booking.createdAt).toDateString(),
         };
       });
 
-      if (json.type === "upcoming") {
-        setUpcoming(formatted);
-      } else {
-        setPast(formatted);
-      }
-
-      setLoading(false);
+      dispatch(
+        meetingSuccess({
+          type,
+          data: formatted,
+        })
+      );
     } catch (err) {
       errorHandler(err);
-      setLoading(false);
+
+      dispatch(meetingError(err));
     }
   };
 
@@ -102,15 +106,13 @@ const Meetings = () => {
             </button>
           </div>
 
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => fetchMeetings(activeTab)}
-            >
-              Refresh
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchMeetings(activeTab)}
+          >
+            Refresh
+          </Button>
         </div>
 
         <div>
@@ -120,7 +122,6 @@ const Meetings = () => {
             </p>
           )}
 
-          {/* Upcoming */}
           {!loading &&
             activeTab === "upcoming" &&
             (upcoming.length ? (
@@ -132,7 +133,6 @@ const Meetings = () => {
               />
             ))}
 
-          {/* Past */}
           {!loading &&
             activeTab === "past" &&
             (past.length ? (
@@ -145,7 +145,6 @@ const Meetings = () => {
             ))}
         </div>
 
-        {/* Footer */}
         <div className="text-center text-sm text-muted-foreground py-4 border-t">
           You've reached the end of the list
         </div>
