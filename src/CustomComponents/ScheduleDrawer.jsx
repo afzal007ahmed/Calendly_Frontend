@@ -266,7 +266,7 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
             </ScheduleDrawerSection>
             <hr />
           </div>
-          <div className="text-end">
+          <div className="text-end p-2">
             <Button
               className=" rounded-full bg-[#006bff] font-bold"
               onClick={addSchedule}
