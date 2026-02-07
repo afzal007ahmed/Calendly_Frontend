@@ -34,15 +34,15 @@ const ScheduleCreate = () => {
               <span>1 invitee</span>
             </p>
           </div>
-          <ScheduleDrawer type="one" open={open.one} setOpen={setOpen} />
-          <div className="hover:bg-gray-200 p-3 w-full" onClick={() => setOpen((prev) => ({...prev , one : !prev.group}))}>
+          { open.one && <ScheduleDrawer type="one" open={open.one} setOpen={setOpen} />}
+          <div className="hover:bg-gray-200 p-3 w-full" onClick={() => setOpen((prev) => ({...prev , group : !prev.group}))}>
             <p className="font-bold text-[#006bff] text-sm">Group</p>
             <p className="flex text-xs items-center gap-1">
               <span>1 host</span> <ArrowRight size={12} />{" "}
               <span>multiple invitees</span>
             </p>
           </div>
-          <ScheduleDrawer type="group" open={open.group} setOpen={setOpen} />
+          { open.group && <ScheduleDrawer type="group" open={open.group} setOpen={setOpen} />}
         </PopoverContent>
       </Popover>
     </div>

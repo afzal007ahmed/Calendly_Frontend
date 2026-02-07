@@ -60,7 +60,7 @@ const Public = () => {
       return;
     }
 
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
 
     async function getDetails() {
       try {
@@ -163,7 +163,7 @@ const Public = () => {
       };
 
       await createMeeting(body);
-      toast.success("Schedule created.");
+      toast.success("Meeting created successfully.");
       setLoading(true);
       setTimeout(() => {
         navigate(routes.scheduling);
