@@ -36,12 +36,13 @@ const ScheduleListing = ({ schedules }) => {
                 </p>
               </div>
             </div>
-            <Link
-              to={`/${schedule.public_link}`}
+            <a href={`/${schedule.public_link}`} target="_blank">
+            <div
               className="bg-gray-100 px-4 py-2 rounded-2xl border cursor-pointer"
             >
               <PiLinkSimpleLight className="text-xl font-extrabold" />
-            </Link>
+            </div>
+            </a>
           </div>
         ))
       ) : (

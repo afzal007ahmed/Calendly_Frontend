@@ -1,23 +1,27 @@
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { getBooking } from "@/services/booking.services";
 import React, { useEffect, useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { routes } from "@/Routes/routes";
+import { emailSchema } from "@/validations/joi.validate";
+import { Loader2 } from "lucide-react";
+import { createMeeting } from "@/services/bookings.services";
 
 const Public = () => {
+  const [next, setNext] = useState("booking");
   const { username, userId, scheduleId } = useParams();
   const [details, setDetails] = useState({});
   const { errorHandler } = useErrorHandler();
   const [date, setDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const weekdays = [
     "Sunday",
@@ -43,6 +47,11 @@ const Public = () => {
     "December",
   ];
   const [slots, setSlots] = useState([]);
+  const [guest, setGuest] = useState({
+    name: "",
+    email: "",
+    note: "",
+  });
 
   useEffect(() => {
     if (!username || !userId || !scheduleId) {
@@ -100,16 +109,60 @@ const Public = () => {
     }
   }
 
-  const [searchParams] = useSearchParams();
-  const location = useLocation();
+  function timeToMinutes(time) {
+    const [hours, minutes] = time.split(":");
+    const [m, _] = minutes.split(" ");
+    const totalMins = Number(hours) * 60 + Number(m);
+    return totalMins;
+  }
 
-  console.log();
+  async function handleCreateSchedule() {
+    try {
+      setLoading(true);
+      if (!guest.name.trim().length) {
+        toast.error("Please enter your name.");
+        return;
+      }
+      if (!guest.email.trim().length) {
+        toast.error("Please enter your email.");
+        return;
+      }
 
-  function confirmPage() {
-    const params = new URLSearchParams(searchParams);
-    params.set("month", `${String(date.getMonth() + 1).padStart(2, "0")}`);
-    params.set("date", new Date(date));
-    navigate(`${location.pathname}/confirm?${params.toString()}`);
+      const emailValidation = emailSchema.validate(guest.email);
+      if (emailValidation.error) {
+        toast.error(emailValidation.error.message);
+        return;
+      }
+      if (guest.email.split("@")[1] !== "gmail.com") {
+        toast.error("We accept only gmail accounts.");
+        return;
+      }
+      const body = {
+        duration: duration,
+        scheduleId: scheduleId,
+        host_id: userId,
+        type: schedule?.type_of_meeting,
+        subject: schedule?.meeting_name,
+        from: timeToMinutes(selectedSlot),
+        to: timeToMinutes(selectedSlot) + duration,
+        date: date,
+        guest: {
+          name: guest.name,
+          email: guest.email,
+          note: guest.note,
+        },
+      };
+
+      await createMeeting(body);
+      toast.success("Schedule created.");
+      setLoading(true);
+      setTimeout(() => {
+        navigate(routes.scheduling);
+      }, 2000);
+    } catch (error) {
+      setLoading(false);
+      errorHandler(error);
+    }
   }
 
   return (
@@ -128,69 +181,125 @@ const Public = () => {
           </div>
         </div>
         <div className="bg-[#1A1A1A] w-0.5 h-full opacity-25"></div>
-        <div className="flex flex-col items-center gap-8 p-6 mt-4">
-          <p className="text-2xl font-bold opacity-75">Select a Date & Time</p>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={(selectedDate) => {
-              if (!selectedDate) return;
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              const picked = new Date(selectedDate);
-              picked.setHours(0, 0, 0, 0);
+        {/* component  */}
+        {next === "booking" ? (
+          <div className="flex">
+            <div className="flex flex-col items-center gap-8 p-6 mt-4">
+              <p className="text-2xl font-bold opacity-75">
+                Select a Date & Time
+              </p>
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(selectedDate) => {
+                  if (!selectedDate) return;
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const picked = new Date(selectedDate);
+                  picked.setHours(0, 0, 0, 0);
 
-              const weekdayName = weekdays[picked.getDay()];
-              const isAvailable = allowedDays?.includes(weekdayName);
+                  const weekdayName = weekdays[picked.getDay()];
+                  const isAvailable = allowedDays?.includes(weekdayName);
 
-              if (!isAvailable || picked < today) {
-                toast.info(
-                  "Please select available days!",
-                );
-                return;
-              }
-              setDate(selectedDate);
-              generateSlots(selectedDate);
-            }}
-            captionLayout="dropdown"
-            className="rounded-2xl border w-full p-4"
-            modifiers={{
-              available: (day) => allowedDays?.includes(weekdays[day.getDay()]),
-              unavailable : (day) => !allowedDays?.includes(weekdays[day.getDay()]),
-            }}
-            modifiersClassNames={{
-              available: "text-white font-extrabold bg-[#1A1A1A]/40 rounded-2xl",
-              today: "border rounded-2xl font-semibold",
-              unavailable : "text-black font-extrabold rounded-2xl"
-            }}
-            classNames={{
-              day: "h-7 w-7 m-1 flex items-center justify-center rounded-2xl",
-            }}
-          />
-        </div>
-        <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
-          <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
-          <div className="flex flex-col gap-3 w-full">
-            {slots.map((slot) => (
-              <div key={slot} className="flex w-60 gap-1">
-                <p
-                  className="border border-[#1A1A1A]/50 rounded text-[#1A1A1A] font-medium flex items-center justify-center py-1 cursor-pointer flex-1"
-                  onClick={() => setSelectedSlot(slot)}
-                >
-                  {slot}
-                </p>
-                {selectedSlot === slot && (
-                  <button
-                    className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1 hover:bg-[#1A1A1A]/80 cursor-pointer"
-                    onClick={() => confirmPage()}
-                  >
-                    Next
-                  </button>
-                )}
+                  if (!isAvailable || picked < today) {
+                    toast.info("Please select available days!");
+                    return;
+                  }
+                  setDate(selectedDate);
+                  generateSlots(selectedDate);
+                }}
+                captionLayout="dropdown"
+                className="rounded-2xl border w-full p-4"
+                modifiers={{
+                  available: (day) =>
+                    allowedDays?.includes(weekdays[day.getDay()]),
+                  unavailable: (day) =>
+                    !allowedDays?.includes(weekdays[day.getDay()]),
+                }}
+                modifiersClassNames={{
+                  available:
+                    "text-white font-extrabold bg-[#1A1A1A]/40 rounded-2xl",
+                  today: "border rounded-2xl font-semibold",
+                  unavailable: "text-black font-extrabold rounded-2xl",
+                }}
+                classNames={{
+                  day: "h-7 w-7 m-1 flex items-center justify-center rounded-2xl",
+                }}
+              />
+            </div>
+            <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
+              <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
+              <div className="flex flex-col gap-3 w-full">
+                {slots.map((slot) => (
+                  <div key={slot} className="flex w-60 gap-1">
+                    <p
+                      className="border border-[#1A1A1A]/50 rounded text-[#1A1A1A] font-medium flex items-center justify-center py-1 cursor-pointer flex-1"
+                      onClick={() => setSelectedSlot(slot)}
+                    >
+                      {slot}
+                    </p>
+                    {selectedSlot === slot && (
+                      <button
+                        className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1 hover:bg-[#1A1A1A]/80 cursor-pointer"
+                        onClick={() => setNext("confim")}
+                      >
+                        Next
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex-1 p-12">
+            <p className="font-bold text-2xl">Enter Details</p>
+            <div className="mt-3">
+              {" "}
+              <p className="mb-2 font-medium text-sm">Name *</p>
+              <Input
+                type="text"
+                value={guest.name}
+                onChange={(e) =>
+                  setGuest((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+            </div>
+            <div className="mt-3">
+              <p className="mb-2 font-medium text-sm">Email *</p>
+              <Input
+                type="email"
+                value={guest.email}
+                onChange={(e) =>
+                  setGuest((prev) => ({ ...prev, email: e.target.value }))
+                }
+              />
+            </div>
+            <div className="mt-3">
+              <p className="mb-2 font-medium text-sm">Note</p>
+              <Textarea
+                value={guest.note}
+                onChange={(e) =>
+                  setGuest((prev) => ({ ...prev, note: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="mt-12">
+              <Button
+                className="rounded-full bg-[#006bff] font-bold"
+                onClick={handleCreateSchedule}
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Schedule Event"
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+        {/* end component */}
       </div>
     </div>
   );

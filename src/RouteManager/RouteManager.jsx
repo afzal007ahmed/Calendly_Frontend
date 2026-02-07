@@ -10,7 +10,6 @@ import Register from "@/Pages/Register";
 import Redirect from "@/Pages/Redirect";
 import Profile from "@/Pages/Profile";
 import Public from "@/Pages/Public";
-import Confirm from "@/Pages/Confirm";
 
 const RouteManager = () => {
   return (
@@ -52,7 +51,6 @@ const RouteManager = () => {
         }
       />
       <Route path={routes.booking} element={<Public />}/>
-      <Route path={routes.confirm} element={<Confirm/>} />
     </Routes>
   );
 };

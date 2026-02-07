@@ -21,4 +21,6 @@ export const config = {
 
   google_redirect_login: (token) =>
     BASE_URL + API_PATHS.googleRedirectLogin(token),
+
+  confirm_booking: BASE_URL + API_PATHS.confirmBooking,
 };
