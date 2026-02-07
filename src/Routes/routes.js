@@ -6,6 +6,5 @@ export const routes = {
   register: "/register",
   redirect: "/redirect",
   profile: "/profile",
-  booking : "/book/:username/:userId/:scheduleId",
-  confirm: "/book/:username/:hostid/:scheduleid/confirm",
+  booking : "/book/:username/:userId/:scheduleId"
 };
