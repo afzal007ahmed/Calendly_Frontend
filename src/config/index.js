@@ -1,24 +1,24 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL?.replace(/\/+$/, "");
+import { API_PATHS } from "./apiPath";
 
-const api = (path) => `${BASE_URL}/${path}`;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const config = {
-  userDetails: api("user"),
-  userNameUpdate: api("user/name"),
+  userDetails: BASE_URL + API_PATHS.user,
+  userNameUpdate: BASE_URL + API_PATHS.userNameUpdate,
 
-  login: api("auth/login"),
-  register: api("auth/register"),
+  login: BASE_URL + API_PATHS.login,
+  register: BASE_URL + API_PATHS.register,
 
-  availability: api("availability"),
-  schedules: api("schedules"),
+  availability: BASE_URL + API_PATHS.availability,
+  schedules: BASE_URL + API_PATHS.schedules,
 
   booking: (username, userId, scheduleId) =>
-    api(`book/${username}/${userId}/${scheduleId}`),
+    BASE_URL + API_PATHS.booking(username, userId, scheduleId),
 
-  meetingDetail: (type) => api(`meetings?type=${encodeURIComponent(type)}`),
+  meetingDetail: (type) => BASE_URL + API_PATHS.meetingDetail(type),
 
-  google_redirect: api("google/login/auth"),
+  google_redirect: BASE_URL + API_PATHS.googleRedirect,
 
   google_redirect_login: (token) =>
-    api(`google/connect/auth?token=${encodeURIComponent(token)}`),
+    BASE_URL + API_PATHS.googleRedirectLogin(token),
 };
