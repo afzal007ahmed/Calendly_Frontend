@@ -12,6 +12,8 @@ import { routes } from "@/Routes/routes";
 import { emailSchema } from "@/validations/joi.validate";
 import { Loader2 } from "lucide-react";
 import { createMeeting } from "@/services/bookings.services";
+import { MdOutlineDateRange } from "react-icons/md";
+import { IoEarthOutline } from "react-icons/io5";
 
 const Public = () => {
   const [next, setNext] = useState("booking");
@@ -75,6 +77,7 @@ const Public = () => {
   const host = details?.host;
   const schedule = details?.schedule;
   const availability = details?.availability;
+  const bookings = details?.bookings;
 
   const allowedDays = availability?.map((a) => a.day);
 
@@ -105,6 +108,12 @@ const Public = () => {
       start + duration <= dayAvailability.to;
       start += duration
     ) {
+      if((schedule?.type_of_meeting === "one")){
+        const isPresent = bookings.some(b => b?.from === start)
+        
+        if(isPresent)
+          continue;
+      }
       setSlots((prev) => [...prev, minutesToTime(start)]);
     }
   }
@@ -139,7 +148,7 @@ const Public = () => {
       }
       const body = {
         duration: duration,
-        scheduleId: scheduleId,
+        schedule_id: scheduleId,
         host_id: userId,
         type: schedule?.type_of_meeting,
         subject: schedule?.meeting_name,
@@ -173,11 +182,21 @@ const Public = () => {
             <p className="text-lg font-semibold opacity-45">{host?.name}</p>
             <p className="text-2xl font-bold">{schedule?.meeting_name}</p>
           </div>
-          <div className="flex gap-2 items-center">
-            <AiOutlineFieldTime className="text-2xl opacity-60" />
-            <p className="text-sm font-semibold opacity-45">
-              {schedule?.duration} min
-            </p>
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2 items-center">
+              <AiOutlineFieldTime className="text-2xl opacity-60" />
+              <p className="text-xs font-semibold opacity-45">
+                {schedule?.duration} min
+              </p>
+            </div>
+            <div className="flex gap-2 items-center">
+              <MdOutlineDateRange className="text-2xl opacity-60" />
+              <p className="text-xs font-semibold opacity-45">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
+            </div>
+            <div className="flex gap-2 items-center">
+              <IoEarthOutline className="text-2xl opacity-60" />
+              <p className="text-xs font-semibold opacity-45">Indian Standard Time (IST)</p>
+            </div>
           </div>
         </div>
         <div className="bg-[#1A1A1A] w-0.5 h-full opacity-25"></div>
