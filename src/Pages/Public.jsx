@@ -164,13 +164,14 @@ const Public = () => {
 
       await createMeeting(body);
       toast.success("Schedule created.");
-      setLoading(true);
       setTimeout(() => {
         navigate(routes.scheduling);
       }, 2000);
     } catch (error) {
-      setLoading(false);
       errorHandler(error);
+    }
+    finally{
+      setLoading(false);
     }
   }
 
@@ -185,9 +186,16 @@ const Public = () => {
           <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
               <AiOutlineFieldTime className="text-2xl opacity-60" />
-              <p className="text-xs font-semibold opacity-45">
-                {schedule?.duration} min
-              </p>
+              <div>
+                <p className="text-xs font-semibold opacity-45">
+                  {schedule?.duration} min </p>
+                <p className="text-xs font-semibold opacity-45">
+                  {
+                    date!==null && selectedSlot!==null &&
+                    `${selectedSlot} - ${minutesToTime(timeToMinutes(selectedSlot) +duration)}`
+                  }
+                </p>  
+              </div>
             </div>
             { date!==null &&
               <div className="flex gap-2 items-center">
@@ -316,7 +324,7 @@ const Public = () => {
 
             <div className="mt-12">
               <Button
-                className="rounded-full bg-[#006bff] font-bold"
+                className="rounded-full bg-[#006bff] font-bold cursor-pointer"
                 onClick={handleCreateSchedule}
               >
                 {loading ? (
