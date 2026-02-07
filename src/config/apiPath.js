@@ -7,6 +7,7 @@ export const API_PATHS = {
 
   availability: "availability",
   schedules: "schedules",
+  deleteSchedules : "schedules/delete",
   confirmBooking: "bookings/",
 
   booking: (username, userId, scheduleId) =>

@@ -28,7 +28,7 @@ export const createSchedule = async (body) => {
 
 export const deleteSelectedIds = async (ids) => {
   const token = localStorage.getItem("token");
-  await axios.post(config.schedules + '/delete', { ids }, {
+  await axios.post(config.deleteSchedules, { ids }, {
     headers : {
         Authorization : `Bearer ${token}`
     }
