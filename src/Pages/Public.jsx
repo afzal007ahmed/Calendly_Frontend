@@ -154,6 +154,7 @@ const Public = () => {
         subject: schedule?.meeting_name,
         from: timeToMinutes(selectedSlot),
         to: timeToMinutes(selectedSlot) + duration,
+        limit : schedule?.limit ,
         date: date,
         guest: {
           name: guest.name,
