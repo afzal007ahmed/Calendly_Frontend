@@ -103,13 +103,15 @@ const Public = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
-  console.log();
+  function timeToMinutes(time){
+    const [hours,minutes] = time.split(":");
+    const [m, _] = minutes.split(" ");
+    const totalMins = Number(hours)*60 + Number(m);
+    return totalMins;
+  }
+  
+  function confirmPage(){
 
-  function confirmPage() {
-    const params = new URLSearchParams(searchParams);
-    params.set("month", `${String(date.getMonth() + 1).padStart(2, "0")}`);
-    params.set("date", new Date(date));
-    navigate(`${location.pathname}/confirm?${params.toString()}`);
   }
 
   return (
@@ -128,69 +130,73 @@ const Public = () => {
           </div>
         </div>
         <div className="bg-[#1A1A1A] w-0.5 h-full opacity-25"></div>
-        <div className="flex flex-col items-center gap-8 p-6 mt-4">
-          <p className="text-2xl font-bold opacity-75">Select a Date & Time</p>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={(selectedDate) => {
-              if (!selectedDate) return;
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              const picked = new Date(selectedDate);
-              picked.setHours(0, 0, 0, 0);
+         {/* component  */}
+        <div className="flex">
+          <div className="flex flex-col items-center gap-8 p-6 mt-4">
+            <p className="text-2xl font-bold opacity-75">Select a Date & Time</p>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(selectedDate) => {
+                if (!selectedDate) return;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const picked = new Date(selectedDate);
+                picked.setHours(0, 0, 0, 0);
 
-              const weekdayName = weekdays[picked.getDay()];
-              const isAvailable = allowedDays?.includes(weekdayName);
+                const weekdayName = weekdays[picked.getDay()];
+                const isAvailable = allowedDays?.includes(weekdayName);
 
-              if (!isAvailable || picked < today) {
-                toast.info(
-                  "Please select available days!",
-                );
-                return;
-              }
-              setDate(selectedDate);
-              generateSlots(selectedDate);
-            }}
-            captionLayout="dropdown"
-            className="rounded-2xl border w-full p-4"
-            modifiers={{
-              available: (day) => allowedDays?.includes(weekdays[day.getDay()]),
-              unavailable : (day) => !allowedDays?.includes(weekdays[day.getDay()]),
-            }}
-            modifiersClassNames={{
-              available: "text-white font-extrabold bg-[#1A1A1A]/40 rounded-2xl",
-              today: "border rounded-2xl font-semibold",
-              unavailable : "text-black font-extrabold rounded-2xl"
-            }}
-            classNames={{
-              day: "h-7 w-7 m-1 flex items-center justify-center rounded-2xl",
-            }}
-          />
-        </div>
-        <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
-          <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
-          <div className="flex flex-col gap-3 w-full">
-            {slots.map((slot) => (
-              <div key={slot} className="flex w-60 gap-1">
-                <p
-                  className="border border-[#1A1A1A]/50 rounded text-[#1A1A1A] font-medium flex items-center justify-center py-1 cursor-pointer flex-1"
-                  onClick={() => setSelectedSlot(slot)}
-                >
-                  {slot}
-                </p>
-                {selectedSlot === slot && (
-                  <button
-                    className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1 hover:bg-[#1A1A1A]/80 cursor-pointer"
-                    onClick={() => confirmPage()}
+                if (!isAvailable || picked < today) {
+                  toast.info(
+                    "Please select available days!",
+                  );
+                  return;
+                }
+                setDate(selectedDate);
+                generateSlots(selectedDate);
+              }}
+              captionLayout="dropdown"
+              className="rounded-2xl border w-full p-4"
+              modifiers={{
+                available: (day) => allowedDays?.includes(weekdays[day.getDay()]),
+                unavailable : (day) => !allowedDays?.includes(weekdays[day.getDay()]),
+              }}
+              modifiersClassNames={{
+                available: "text-white font-extrabold bg-[#1A1A1A]/40 rounded-2xl",
+                today: "border rounded-2xl font-semibold",
+                unavailable : "text-black font-extrabold rounded-2xl"
+              }}
+              classNames={{
+                day: "h-7 w-7 m-1 flex items-center justify-center rounded-2xl",
+              }}
+            />
+          </div>
+          <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
+            <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
+            <div className="flex flex-col gap-3 w-full">
+              {slots.map((slot) => (
+                <div key={slot} className="flex w-60 gap-1">
+                  <p
+                    className="border border-[#1A1A1A]/50 rounded text-[#1A1A1A] font-medium flex items-center justify-center py-1 cursor-pointer flex-1"
+                    onClick={() => setSelectedSlot(slot)}
                   >
-                    Next
-                  </button>
-                )}
-              </div>
-            ))}
+                    {slot}
+                  </p>
+                  {selectedSlot === slot && (
+                    <button
+                      className="bg-[#1A1A1A] px-4 py-2 rounded text-white font-semibold flex-1 hover:bg-[#1A1A1A]/80 cursor-pointer"
+                      onClick={() => confirmPage()}
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+        {/* end component */}
       </div>
     </div>
   );
