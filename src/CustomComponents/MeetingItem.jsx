@@ -8,9 +8,14 @@ import { useContext } from "react";
 const MeetingItem = ({ meeting }) => {
   const [open, setOpen] = useState(false);
   const { user, setUser } = useContext(AppContext);
+  const isCancelled = meeting.status === false;
 
   return (
-    <div className="px-4 sm:px-6 py-4 border-b">
+    <div
+      className={`px-4 sm:px-6 py-4 border-b ${
+        isCancelled ? "line-through opacity-60" : ""
+      }`}
+    >
       <div className="grid grid-cols-1 sm:grid-cols-12 items-start sm:items-center gap-4">
         <div className="sm:col-span-4 flex gap-3">
           <div className="w-10 h-10 rounded-full bg-purple-500 shrink-0" />

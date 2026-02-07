@@ -52,6 +52,7 @@ const Meetings = () => {
           id: item._id,
           name: guest?.name,
           email: guest?.email,
+          status: item.status,
           note: guest?.note,
           date: booking.date,
           time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
