@@ -11,7 +11,7 @@ export const config = {
 
   availability: BASE_URL + API_PATHS.availability,
   schedules: BASE_URL + API_PATHS.schedules,
-
+  deleteSchedules : BASE_URL + API_PATHS.deleteSchedules,
   booking: (username, userId, scheduleId) =>
     BASE_URL + API_PATHS.booking(username, userId, scheduleId),
 

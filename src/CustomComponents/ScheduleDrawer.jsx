@@ -37,12 +37,13 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
   const [select, setSelect] = useState(false);
   const [loading, setLoading] = useState(false);
   const { errorHandler } = useErrorHandler();
+
   const [details, setDetails] = useState({
     title: "New Meeting",
     duration: 15,
     duration_custom: false,
     availability: availability.data,
-    limit: type == "group" ? 2 : null,
+    limit: type === "group" ? 2 : 0,
     type: type,
     host: user.data.name,
     duration_unit: "min",
@@ -104,6 +105,12 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
         details.duration > 720
       ) {
         toast.error("Please provide a valid duration.");
+        setLoading(false);
+        return;
+      }
+      if (details.limit > 9999) {
+        toast.error("Please provide a valid limit.");
+        setLoading(false);
         return;
       }
       await createSchedule(details);
@@ -134,7 +141,6 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
   useEffect(() => {
     fetchAvailability();
   }, []);
-
   return (
     <Sheet
       open={open}
@@ -248,6 +254,28 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
                 <AvailibilityList data={availability.data} />
               )}
             </ScheduleDrawerSection>
+
+            {type === "group" && (
+              <>
+                <hr />
+                <ScheduleDrawerSection
+                  title="Limit"
+                  subTitle="Select limit for meeting."
+                >
+                  <Input
+                    value={details.limit?.toString()}
+                    onChange={(e) =>
+                      setDetails((prev) => ({
+                        ...prev,
+                        limit: Number(e.target.value),
+                      }))
+                    }
+                    className="ml-2"
+                  />
+                </ScheduleDrawerSection>
+              </>
+            )}
+
             <hr />
             <ScheduleDrawerSection title="Host" subTitle={user.data.name}>
               <div className="pl-8 mt-4 flex gap-2 font-bold text-sm items-center">
@@ -273,7 +301,7 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
             >
               {" "}
               {loading ? (
-                <Loader2 className="animate-spin"/>
+                <Loader2 className="animate-spin" />
               ) : (
                 <>
                   <Plus />

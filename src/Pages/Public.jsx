@@ -12,13 +12,15 @@ import { routes } from "@/Routes/routes";
 import { emailSchema } from "@/validations/joi.validate";
 import { Loader2 } from "lucide-react";
 import { createMeeting } from "@/services/bookings.services";
+import { MdOutlineDateRange } from "react-icons/md";
+import { IoEarthOutline } from "react-icons/io5";
 
 const Public = () => {
   const [next, setNext] = useState("booking");
   const { username, userId, scheduleId } = useParams();
   const [details, setDetails] = useState({});
   const { errorHandler } = useErrorHandler();
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,7 @@ const Public = () => {
       return;
     }
 
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
 
     async function getDetails() {
       try {
@@ -75,6 +77,7 @@ const Public = () => {
   const host = details?.host;
   const schedule = details?.schedule;
   const availability = details?.availability;
+  const bookings = details?.bookings;
 
   const allowedDays = availability?.map((a) => a.day);
 
@@ -105,6 +108,12 @@ const Public = () => {
       start + duration <= dayAvailability.to;
       start += duration
     ) {
+      if((schedule?.type_of_meeting === "one")){
+        const isPresent = bookings.some(b => b?.from === start)
+        
+        if(isPresent)
+          continue;
+      }
       setSlots((prev) => [...prev, minutesToTime(start)]);
     }
   }
@@ -139,7 +148,7 @@ const Public = () => {
       }
       const body = {
         duration: duration,
-        scheduleId: scheduleId,
+        schedule_id: scheduleId,
         host_id: userId,
         type: schedule?.type_of_meeting,
         subject: schedule?.meeting_name,
@@ -154,14 +163,15 @@ const Public = () => {
       };
 
       await createMeeting(body);
-      toast.success("Schedule created.");
-      setLoading(true);
+      toast.success("Meeting created successfully.");
       setTimeout(() => {
         navigate(routes.scheduling);
       }, 2000);
     } catch (error) {
-      setLoading(false);
       errorHandler(error);
+    }
+    finally{
+      setLoading(false);
     }
   }
 
@@ -173,11 +183,30 @@ const Public = () => {
             <p className="text-lg font-semibold opacity-45">{host?.name}</p>
             <p className="text-2xl font-bold">{schedule?.meeting_name}</p>
           </div>
-          <div className="flex gap-2 items-center">
-            <AiOutlineFieldTime className="text-2xl opacity-60" />
-            <p className="text-sm font-semibold opacity-45">
-              {schedule?.duration} min
-            </p>
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2 items-center">
+              <AiOutlineFieldTime className="text-2xl opacity-60" />
+              <div>
+                <p className="text-xs font-semibold opacity-45">
+                  {schedule?.duration} min </p>
+                <p className="text-xs font-semibold opacity-45">
+                  {
+                    date!==null && selectedSlot!==null &&
+                    `${selectedSlot} - ${minutesToTime(timeToMinutes(selectedSlot) +duration)}`
+                  }
+                </p>  
+              </div>
+            </div>
+            { date!==null &&
+              <div className="flex gap-2 items-center">
+                <MdOutlineDateRange className="text-2xl opacity-60" />
+                <p className="text-xs font-semibold opacity-45">{`${weekdays[date?.getDay()]}, ${date?.getDate()} ${months[date?.getMonth()]} ${date?.getFullYear()}`}</p>
+              </div>
+            }
+            <div className="flex gap-2 items-center">
+              <IoEarthOutline className="text-2xl opacity-60" />
+              <p className="text-xs font-semibold opacity-45">Indian Standard Time (IST)</p>
+            </div>
           </div>
         </div>
         <div className="bg-[#1A1A1A] w-0.5 h-full opacity-25"></div>
@@ -201,7 +230,12 @@ const Public = () => {
                   const weekdayName = weekdays[picked.getDay()];
                   const isAvailable = allowedDays?.includes(weekdayName);
 
-                  if (!isAvailable || picked < today) {
+                  if(picked < today){
+                    toast.info("Please select valid days!");
+                    return;
+                  }
+
+                  if (!isAvailable) {
                     toast.info("Please select available days!");
                     return;
                   }
@@ -227,8 +261,11 @@ const Public = () => {
                 }}
               />
             </div>
-            <div className="overflow-scroll p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4">
-              <p className="font-bold opacity-75">{`${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`}</p>
+            <div className={`p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4 ${date===null ? "overflow-hidden" : "overflow-scroll"}`}>
+              {
+                date!== null && 
+                <p className="font-bold opacity-75">{`${weekdays[date?.getDay()]}, ${date?.getDate()} ${months[date?.getMonth()]} ${date?.getFullYear()}`}</p>
+              }
               <div className="flex flex-col gap-3 w-full">
                 {slots.map((slot) => (
                   <div key={slot} className="flex w-60 gap-1">
@@ -287,7 +324,7 @@ const Public = () => {
 
             <div className="mt-12">
               <Button
-                className="rounded-full bg-[#006bff] font-bold"
+                className="rounded-full bg-[#006bff] font-bold cursor-pointer"
                 onClick={handleCreateSchedule}
               >
                 {loading ? (

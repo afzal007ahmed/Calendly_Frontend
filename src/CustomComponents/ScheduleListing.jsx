@@ -1,24 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import { PiLinkSimpleLight } from "react-icons/pi";
 import { Link } from "react-router";
+import { IoTrashBinSharp } from "react-icons/io5";
+import { deleteSelectedIds } from "@/services/schedule.services";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
+import { toast } from "sonner";
 
-const ScheduleListing = ({ schedules }) => {
+const ScheduleListing = ({ schedules, getSchedulesForUser }) => {
   const order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const [selected, setSelected] = useState([]);
+  const {errorHandler} = useErrorHandler();
+
+  function addSelected(id){
+    if(selected.includes(id)){
+      setSelected(prev => prev.filter(i => i!==id))
+    }
+    else {
+      setSelected(prev => [...prev, id])
+    }
+  }
+
+  async function deleteSelected(){
+    try {
+      await deleteSelectedIds(selected);
+      await getSchedulesForUser()
+      setSelected([]);
+      toast.success("Successfully deleted schedules!")
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 my-4">
+      {
+      selected.length>0 &&
+      <div className="flex gap-4 items-center ml-8 -mt-12 absolute">
+        <IoTrashBinSharp className="text-red-500 text-3xl rounded-2xl bg-white p-1 cursor-pointer"
+        onClick={deleteSelected}
+        />
+        <p className="text-red-800 rounded-2xl text-sm font-semibold">Delete Selected</p>
+      </div>
+      }
       {schedules && schedules.length > 0 ? (
         schedules.map((schedule) => (
           <div
             key={schedule._id}
-            className="flex justify-between bg-white px-6 py-3 items-center rounded-2xl shadow-xl border-l-8 border-violet-700
+            className={`flex justify-between px-6 py-3 items-center rounded-2xl shadow-xl border-l-8 border-violet-700 cursor-pointer
                 hover:bg-gray-100
-                "
+                ${selected.includes(schedule._id) ? "bg-violet-100" : "bg-white" }`}
           >
             <div className="flex items-center gap-4">
               <div>
                 {/* selected logic to be done */}
-                <input type="checkbox" />
+                <input type="checkbox" 
+                checked={selected.includes(schedule._id)}
+                onChange={() => addSelected(schedule._id)}
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-extrabold">{schedule.meeting_name}</p>
