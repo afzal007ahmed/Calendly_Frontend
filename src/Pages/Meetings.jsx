@@ -37,13 +37,14 @@ const Meetings = () => {
 
     return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
   };
-  console.log( upcoming ) ;
+  console.log(upcoming);
 
   const fetchMeetings = async (type) => {
     try {
       dispatch(meetingStart());
 
       const json = await fetchDetails(type);
+      console.log(json);
 
       const formatted = json.data.map((item) => {
         const booking = item.booking_id;
@@ -55,7 +56,7 @@ const Meetings = () => {
           email: guest?.email,
           status: item.status,
           note: guest?.note,
-          date: booking.date,
+          date: new Date(booking.date).toDateString(),
           time: `${formatTime(booking.from)} - ${formatTime(booking.to)}`,
           timezone: "India Time",
           type: booking.meeting_id,

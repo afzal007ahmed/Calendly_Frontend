@@ -20,7 +20,7 @@ const MeetingItem = ({ meeting, refresh }) => {
       setLoading(true);
 
       await deleteMeeting(meeting.type);
-      toast.success("Meeting cancelled successfully.")
+      toast.success("Meeting cancelled successfully.");
       refresh();
     } catch (err) {
       errorHandler(err);
@@ -43,6 +43,7 @@ const MeetingItem = ({ meeting, refresh }) => {
             <p className="font-medium">{meeting.time}</p>
 
             <p className="text-sm text-muted-foreground">{meeting.timezone}</p>
+            <p className="text-sm text-muted-foreground">{meeting.date}</p>
           </div>
         </div>
 
