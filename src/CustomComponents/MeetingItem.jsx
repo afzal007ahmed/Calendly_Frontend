@@ -4,10 +4,30 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { AppContext } from "@/context/AppContext";
 import { useContext } from "react";
+import { deleteMeeting } from "@/services/meeting.service";
+import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 
-const MeetingItem = ({ meeting }) => {
+const MeetingItem = ({ meeting, refresh }) => {
   const [open, setOpen] = useState(false);
   const { user, setUser } = useContext(AppContext);
+  const [loading, setLoading] = useState(false);
+  const { errorHandler } = useErrorHandler();
+
+  const handleCancel = async () => {
+    console.log("clicked", meeting.id);
+
+    try {
+      setLoading(true);
+
+      await deleteMeeting(meeting.id);
+
+      refresh();
+    } catch (err) {
+      errorHandler(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="px-4 sm:px-6 py-4 border-b">
@@ -49,8 +69,13 @@ const MeetingItem = ({ meeting }) => {
         <div className="mt-6 border-t pt-6">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-6">
             <div className="sm:col-span-3 space-y-3">
-              <Button variant="outline" className="w-full text-red-600">
-                Cancel
+              <Button
+                variant="outline"
+                className="w-full text-red-600"
+                onClick={handleCancel}
+                disabled={loading}
+              >
+                {loading ? "Cancelling..." : "Cancel"}
               </Button>
 
               <Separator />

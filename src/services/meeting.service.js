@@ -12,3 +12,13 @@ export const fetchDetails = async (type) => {
 
   return res.data;
 };
+
+export const deleteMeeting = async (id) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.delete(config.deleteMeeting(id), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};

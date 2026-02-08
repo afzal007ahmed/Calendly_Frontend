@@ -8,48 +8,83 @@ const useErrorHandler = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
+
   function errorHandler(error) {
-    if (error.response.status === 401) {
+    console.error("API Error:", error);
+
+    // ✅ IMPORTANT: Handle network / no-response errors first
+    if (!error.response) {
+      toast.error("Network error. Please check your connection.");
+      return;
+    }
+
+    const { status, data } = error.response;
+
+    // ✅ 401 Unauthorized
+    if (status === 401) {
       setUser(() => {
         localStorage.removeItem("token");
         return { data: null, loading: false };
       });
 
-      if (error.response.data.code === "PASSWORD_MISMATCH") {
+      if (data?.code === "PASSWORD_MISMATCH") {
         toast.error("Password doesn't match");
         return;
       }
-      const message = error.response?.data?.message;
-      toast.error(message);
+
+      toast.error(data?.message || "Session expired");
       navigate(routes.login);
-    } else if (error.response.status === 404) {
-      if (error.response.data.code === "USER_NOT_FOUND") {
+      return;
+    }
+
+    // ✅ 404 Not found
+    if (status === 404) {
+      if (data?.code === "USER_NOT_FOUND") {
         toast.error("User not found. Please register.");
         return;
       }
-    } else if (error.response.status === 409) {
-      if (error.response.data.code === "USER_DUPLICATE") {
-        toast.error(error.response.data.message + " please login");
-        return;
-      }
-    } else if (error.response.status === 403) {
-      if (error.response.data.code === "USER_PASSWORD_MISSING") {
-        toast.error(error.response.data.message + ". try login from google.");
-        return;
-      } else if (error.response.data.code == "CALANDER_PERMISSION_MISSING") {
-        if (token) {
-          nav(routes.scheduling);
-        } else {
-          nav(routes.login);
-        }
-        toast.error("Please check the box for calender permission.");
-      } else {
-        toast.error(error.response.data.message);
-      }
-    } else {
-      toast.error(error.response.data.message);
+
+      toast.error(data?.message || "Not found");
+      return;
     }
+
+    // ✅ 409 Conflict
+    if (status === 409) {
+      if (data?.code === "USER_DUPLICATE") {
+        toast.error(data?.message + " please login");
+        return;
+      }
+
+      toast.error(data?.message || "Conflict error");
+      return;
+    }
+
+    // ✅ 403 Forbidden
+    if (status === 403) {
+      if (data?.code === "USER_PASSWORD_MISSING") {
+        toast.error(data?.message + ". Try login from Google.");
+        return;
+      }
+
+      if (data?.code === "CALANDER_PERMISSION_MISSING") {
+        if (token) {
+          navigate(routes.scheduling);
+        } else {
+          navigate(routes.login);
+        }
+
+        toast.error("Please check the box for calendar permission.");
+        return;
+      }
+
+      toast.error(data?.message || "Access denied");
+      return;
+    }
+
+    // ✅ Fallback
+    toast.error(data?.message || "Something went wrong");
   }
+
   return {
     errorHandler,
   };

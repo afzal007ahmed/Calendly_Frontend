@@ -7,11 +7,13 @@ export const API_PATHS = {
 
   availability: "availability",
   schedules: "schedules",
-  deleteSchedules : "schedules/delete",
+  deleteSchedules: "schedules/delete",
   confirmBooking: "bookings/",
 
   booking: (username, userId, scheduleId) =>
     `book/${username}/${userId}/${scheduleId}`,
+
+  deleteMeeting: (id) => `bookings/${id}`,
 
   meetingDetail: (type) => `meetings?type=${encodeURIComponent(type)}`,
 

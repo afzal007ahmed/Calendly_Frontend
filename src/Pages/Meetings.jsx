@@ -124,7 +124,13 @@ const Meetings = () => {
           {!loading &&
             activeTab === "upcoming" &&
             (upcoming.length ? (
-              upcoming.map((m) => <MeetingItem key={m.id} meeting={m} />)
+              upcoming.map((m) => (
+                <MeetingItem
+                  key={m.id}
+                  meeting={m}
+                  refresh={() => fetchMeetings(activeTab)}
+                />
+              ))
             ) : (
               <EmptyState
                 title="No Upcoming Events"
@@ -135,7 +141,13 @@ const Meetings = () => {
           {!loading &&
             activeTab === "past" &&
             (past.length ? (
-              past.map((m) => <MeetingItem key={m.id} meeting={m} />)
+              past.map((m) => (
+                <MeetingItem
+                  key={m.id}
+                  meeting={m}
+                  refresh={() => fetchMeetings(activeTab)}
+                />
+              ))
             ) : (
               <EmptyState
                 title="No Past Events"

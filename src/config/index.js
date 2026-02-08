@@ -11,11 +11,13 @@ export const config = {
 
   availability: BASE_URL + API_PATHS.availability,
   schedules: BASE_URL + API_PATHS.schedules,
-  deleteSchedules : BASE_URL + API_PATHS.deleteSchedules,
+  deleteSchedules: BASE_URL + API_PATHS.deleteSchedules,
   booking: (username, userId, scheduleId) =>
     BASE_URL + API_PATHS.booking(username, userId, scheduleId),
 
   meetingDetail: (type) => BASE_URL + API_PATHS.meetingDetail(type),
+
+  deleteMeeting: (id) => BASE_URL + API_PATHS.deleteMeeting(id),
 
   google_redirect: BASE_URL + API_PATHS.googleRedirect,
 
