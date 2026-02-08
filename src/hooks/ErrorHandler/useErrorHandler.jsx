@@ -27,6 +27,11 @@ const useErrorHandler = () => {
         toast.error("User not found. Please register.");
         return;
       }
+      else{
+        toast.error(error.response.data.message);
+        navigate(routes.login)
+        return ;
+      }
     } else if (error.response.status === 409) {
       if (error.response.data.code === "USER_DUPLICATE") {
         toast.error(error.response.data.message + " please login");
