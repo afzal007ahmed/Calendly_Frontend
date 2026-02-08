@@ -10,47 +10,50 @@ import Register from "@/Pages/Register";
 import Redirect from "@/Pages/Redirect";
 import Profile from "@/Pages/Profile";
 import Public from "@/Pages/Public";
+import MainPageWrapper from "./MainPageWrapper";
 
 const RouteManager = () => {
   return (
     <Routes>
-      <Route
-        path={routes.scheduling}
-        element={
-          <ProtectedRoute>
-            <Scheduling />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="*" element={<PageNotFound />} />
-      <Route
-        path={routes.availability}
-        element={
-          <ProtectedRoute>
-            <Availability />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={routes.meetings}
-        element={
-          <ProtectedRoute>
-            <Meetings />
-          </ProtectedRoute>
-        }
-      />
+      <Route element={<MainPageWrapper />}>
+        <Route
+          path={routes.scheduling}
+          element={
+            <ProtectedRoute>
+              <Scheduling />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={routes.availability}
+          element={
+            <ProtectedRoute>
+              <Availability />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={routes.meetings}
+          element={
+            <ProtectedRoute>
+              <Meetings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={routes.profile}
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
       <Route path={routes.login} element={<Login />} />
       <Route path={routes.register} element={<Register />} />
       <Route path={routes.redirect} element={<Redirect />} />
-      <Route
-        path={routes.profile}
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route path={routes.booking} element={<Public />}/>
+      <Route path="*" element={<PageNotFound />} />
+      <Route path={routes.booking} element={<Public />} />
     </Routes>
   );
 };

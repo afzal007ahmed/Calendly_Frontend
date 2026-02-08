@@ -60,7 +60,6 @@ const Public = () => {
       return;
     }
 
-    // localStorage.removeItem("token");
 
     async function getDetails() {
       try {
@@ -177,7 +176,7 @@ const Public = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center min-h-[100vh]">
       <div className="bg-white w-220 h-140 rounded-2xl shadow-xl flex gap-4">
         <div className="w-[25%] flex flex-col justify-start items-start p-8 gap-8">
           <div className="flex flex-col mt-2">
