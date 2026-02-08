@@ -59,7 +59,7 @@ const Register = () => {
   }, []);
 
   return (
-    <div className="min-h-full flex-1 flex flex-col flex-wrap justify-center items-center bg-[#f8f9fb] rounded-lg">
+    <div className="min-h-[100vh] flex-1 flex flex-col flex-wrap justify-center items-center bg-[#f8f9fb] rounded-lg">
       <div className="flex items-end gap-2 justify-center mb-5">
         <img src="calendly_logo.svg" className="h-[40px]" />
         <img src="calendly_name.svg" />
