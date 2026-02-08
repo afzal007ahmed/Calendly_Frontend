@@ -37,6 +37,7 @@ const Meetings = () => {
 
     return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
   };
+  console.log( upcoming ) ;
 
   const fetchMeetings = async (type) => {
     try {

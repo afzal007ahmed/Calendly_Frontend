@@ -6,6 +6,7 @@ import { AppContext } from "@/context/AppContext";
 import { useContext } from "react";
 import { deleteMeeting } from "@/services/meeting.service";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
+import { toast } from "sonner";
 
 const MeetingItem = ({ meeting, refresh }) => {
   const [open, setOpen] = useState(false);
@@ -18,8 +19,8 @@ const MeetingItem = ({ meeting, refresh }) => {
     try {
       setLoading(true);
 
-      await deleteMeeting(meeting.id);
-
+      await deleteMeeting(meeting.type);
+      toast.success("Meeting cancelled successfully.")
       refresh();
     } catch (err) {
       errorHandler(err);
