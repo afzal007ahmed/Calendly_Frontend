@@ -1,17 +1,22 @@
-import { AppContext } from "@/context/AppContext";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { userNameChange } from "@/services/user.services";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserFailed,
+  fetchUserLoading,
+  fetchUserSuccess,
+} from "@/redux/Slices/userSlice";
 
 const Profile = () => {
-  const { user, setUser } = useContext(AppContext);
   const [change, setChange] = useState(false);
+  const user = useSelector((state) => state.userReducer);
   const [newName, setNewName] = useState(user.data?.name);
-
   const { errorHandler } = useErrorHandler();
+  const dispatch = useDispatch();
 
   const handleChange = async () => {
     try {
@@ -23,11 +28,12 @@ const Profile = () => {
       if (newName.trim() === user.data.name) {
         return;
       }
-      setUser((prev) => ({ ...prev, loading: true }));
+      dispatch(fetchUserLoading());
       const data = await userNameChange(newName);
       setNewName("");
-      setUser({ data: data.data, loading: false });
+      dispatch(fetchUserSuccess(data.data));
     } catch (error) {
+      dispatch(fetchUserFailed());
       setChange(false);
       setNewName("");
       errorHandler(error);

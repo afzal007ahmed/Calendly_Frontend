@@ -52,8 +52,8 @@ const RouteManager = () => {
       <Route path={routes.login} element={<Login />} />
       <Route path={routes.register} element={<Register />} />
       <Route path={routes.redirect} element={<Redirect />} />
-      <Route path="*" element={<PageNotFound />} />
       <Route path={routes.booking} element={<Public />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };

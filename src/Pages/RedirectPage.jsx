@@ -1,13 +1,15 @@
-import { AppContext } from "@/context/AppContext";
+
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
+import { fetchUserFailed, fetchUserLoading, fetchUserSuccess } from "@/redux/Slices/userSlice";
 import { routes } from "@/Routes/routes";
 import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 
-const Redirect = () => {
-  const { user, setUser } = useContext(AppContext);
+const Redirect = () => { 
+  const dispatch = useDispatch() ;
   const { errorHandler } = useErrorHandler() ;
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ;  
@@ -15,11 +17,12 @@ const Redirect = () => {
 
     const handleUser = async () => {
     try {
-      setUser((prev) => ({ ...prev, loading: true }));
+      dispatch(fetchUserLoading()) ;
       const data = await userDetails();
-      setUser((prev) => ({ ...prev, loading: false, data: data.data }));
+      dispatch( fetchUserSuccess( data ) ) ;
       nav(routes.scheduling)
     } catch (error) {
+      dispatch( fetchUserFailed())
       errorHandler(error);
     }
   };

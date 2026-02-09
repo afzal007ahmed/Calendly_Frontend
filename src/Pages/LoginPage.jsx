@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { config } from "@/config";
-import { AppContext } from "@/context/AppContext";
 import GoogleButton from "@/components/CustomComponents/GoogleButton";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
@@ -10,11 +9,14 @@ import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
+import { useDispatch } from "react-redux";
+import { fetchUserFailed, fetchUserLoading, fetchUserSuccess, userReset } from "@/redux/Slices/userSlice";
 
 const Login = () => {
   const nav = useNavigate();
   const token = localStorage.getItem("token");
   const { errorHandler } = useErrorHandler();
+  const dispatch = useDispatch();
   const [details, setDetails] = useState({
     email: "",
     password: "",
@@ -22,8 +24,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const disable =
     !details.password.trim().length || !details.email.trim().length;
-
-  const { user, setUser } = useContext(AppContext);
 
   const [searchParams] = useSearchParams();
   const message = searchParams.get("message");
@@ -38,21 +38,22 @@ const Login = () => {
   async function loginHandler() {
     try {
       setLoading(true);
-      setUser((prev) => ({ ...prev, loading: true }));
+      dispatch(fetchUserLoading());
       await loginService(details);
       const data = await userDetails();
-      setUser({ loading: false, data: data.data });
+      dispatch(fetchUserSuccess(data.data));
       setLoading(false);
       nav(routes.scheduling);
     } catch (error) {
+      dispatch(fetchUserFailed());
       setLoading(false);
       errorHandler(error);
     }
   }
 
   useEffect(() => {
-    if (!token) {
-      setUser({ data: null, loading: false });
+    if (!token) {  
+      dispatch(userReset())
     }
   }, []);
 

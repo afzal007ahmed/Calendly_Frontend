@@ -2,15 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { AppContext } from "@/context/AppContext";
-import { useContext } from "react";
 import { deleteMeeting } from "@/services/meeting.service";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const MeetingItem = ({ meeting, refresh }) => {
   const [open, setOpen] = useState(false);
-  const { user, setUser } = useContext(AppContext);
+  const user = useSelector((state ) => state.userReducer )
   const [loading, setLoading] = useState(false);
   const { errorHandler } = useErrorHandler();
   const isCancelled = meeting.status === false;

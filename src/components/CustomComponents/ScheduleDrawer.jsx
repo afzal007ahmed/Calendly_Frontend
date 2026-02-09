@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import {
   Select,
@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { AppContext } from "@/context/AppContext";
 import { getAvailability } from "@/services/availability.services";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { Loader2, Plus } from "lucide-react";
@@ -36,7 +35,7 @@ import {
 } from "@/redux/Slices/availabilitySlice";
 const ScheduleDrawer = ({ type, open, setOpen }) => {
   const availability = useSelector((state) => state.availabilityReducer);
-  const { user } = useContext(AppContext);
+  const user = useSelector((state) => state.userReducer)
   const scheduleDetails = useSelector((state) => state.schdeuleDetailsReducer);
   const dispatch = useDispatch();
   const [select, setSelect] = useState(false);

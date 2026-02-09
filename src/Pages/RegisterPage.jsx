@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AppContext } from "@/context/AppContext";
 import GoogleButton from "@/components/CustomComponents/GoogleButton";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
@@ -10,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { config } from "@/config";
 
 const Register = () => {
   const nav = useNavigate();
@@ -125,7 +125,7 @@ const Register = () => {
           <p className="text-gray-400 font-bold">OR</p>
           <div className=" border mt-4 flex-1" style={{ marginTop: 0 }}></div>
         </div>
-        <GoogleButton />
+        <GoogleButton route={config.google_redirect} />
       </div>
     </div>
   );

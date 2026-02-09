@@ -1,11 +1,12 @@
-import { AppContext } from "@/context/AppContext";
+
 import { routes } from "@/Routes/routes";
 import { Loader2 } from "lucide-react";
-import React, { useContext } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AppContext);
+  const user = useSelector((state ) => state.userReducer )
   const token = localStorage.getItem("token");
 
   if (user.loading) {
