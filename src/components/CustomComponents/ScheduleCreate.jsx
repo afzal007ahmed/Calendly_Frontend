@@ -3,10 +3,7 @@ import { ArrowRight, ChevronDown, ChevronUpIcon, Plus } from "lucide-react";
 import {
   Popover,
   PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverDescription,
+  PopoverContent
 } from "../ui/popover";
 import React, { useState } from "react";
 import ScheduleDrawer from "./ScheduleDrawer";

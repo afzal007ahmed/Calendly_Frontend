@@ -92,7 +92,7 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-extrabold">{schedule.meeting_name}</p>
-                <div>
+                <div className="flex items-center gap-0.5">
                   <FcInfo />
                   <p className="text-sm opacity-55">
                     {schedule.duration} min,{" "}
