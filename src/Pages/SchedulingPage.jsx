@@ -1,13 +1,13 @@
 import { config } from "@/config";
-import GoogleButton from "@/CustomComponents/GoogleButton";
-import ScheduleCreate from "@/CustomComponents/ScheduleCreate";
-import ScheduleListing from "@/CustomComponents/ScheduleListing";
+import GoogleButton from "@/components/CustomComponents/GoogleButton";
+import ScheduleCreate from "@/components/CustomComponents/ScheduleCreate";
+import ScheduleListing from "@/components/CustomComponents/ScheduleListing";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import {
   fetchSchedules,
   scheduleError,
   scheduleSuccess,
-} from "@/redux/scheduleSlice";
+} from "@/redux/Slices/scheduleSlice";
 import { getSchedules } from "@/services/schedule.services";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,7 +56,12 @@ const Scheduling = () => {
       ) : (
         <ScheduleCreate />
       )}
-      {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser}/>}
+      {schedules.data && (
+        <ScheduleListing
+          schedules={schedules.data}
+          getSchedulesForUser={getSchedulesForUser}
+        />
+      )}
     </div>
   );
 };

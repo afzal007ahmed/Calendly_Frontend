@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import MeetingItem from "../CustomComponents/MeetingItem";
-import EmptyState from "../CustomComponents/EmptyState";
+import MeetingItem from "../components/CustomComponents/MeetingItem";
+import EmptyState from "../components/CustomComponents/EmptyState";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,7 +9,7 @@ import {
   meetingStart,
   meetingSuccess,
   meetingError,
-} from "@/redux/meetingSlice";
+} from "@/redux/Slices/meetingSlice";
 
 import { fetchDetails } from "@/services/meeting.service";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
