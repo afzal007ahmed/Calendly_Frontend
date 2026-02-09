@@ -2,7 +2,6 @@ import useErrorHandler from '@/hooks/ErrorHandler/useErrorHandler';
 import { getAvailability, saveAndUpdateAvailability } from '@/services/availability.services';
 import React, { useEffect, useState } from 'react'
 import { PiArrowsClockwiseLight } from "react-icons/pi";
-import { SlCalender } from "react-icons/sl";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { toast } from 'sonner';

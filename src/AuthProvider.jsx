@@ -8,12 +8,15 @@
     fetchUserLoading,
     fetchUserSuccess,
   } from "./redux/Slices/userSlice";
+import { useNavigate } from "react-router";
+import { routes } from "./Routes/routes";
 
   const AuthProvider = ({ children }) => {
     const { errorHandler } = useErrorHandler();
     const user = useSelector((state) => state.userReducer);
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
+    const nav = useNavigate() ;
 
     const handleUser = async () => {
       try {
@@ -27,7 +30,9 @@
     };
 
     useEffect(() => {
-      if (!token) return;
+      if (!token) {
+        nav( routes.login )
+      };
       handleUser();
     }, []);
 

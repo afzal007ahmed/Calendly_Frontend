@@ -5,7 +5,7 @@ import { routes } from "@/Routes/routes";
 import { userDetails } from "@/services/user.services";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 
 const Redirect = () => { 
