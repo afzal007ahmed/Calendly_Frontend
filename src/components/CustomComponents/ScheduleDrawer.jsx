@@ -28,12 +28,12 @@ import {
   fetchSchedules,
   scheduleError,
   scheduleSuccess,
-} from "@/redux/scheduleSlice";
+} from "@/redux/Slices/scheduleSlice";
 import {
   availabilityError,
   availabilitySuccess,
   fetchAvailabilityState,
-} from "@/redux/availabilitySlice";
+} from "@/redux/Slices/availabilitySlice";
 const ScheduleDrawer = ({ type, open, setOpen }) => {
   const availability = useSelector((state) => state.availabilityReducer);
   const { user } = useContext(AppContext);

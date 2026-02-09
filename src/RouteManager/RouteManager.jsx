@@ -1,15 +1,15 @@
 import { Route, Routes } from "react-router";
 import { routes } from "../Routes/routes";
-import PageNotFound from "@/Pages/PageNotFound";
-import Scheduling from "@/Pages/Scheduling";
-import Availability from "@/Pages/Availability";
-import Meetings from "@/Pages/Meetings";
-import Login from "@/Pages/Login";
+import PageNotFound from "@/Pages/PageNotFoundPage";
+import Scheduling from "@/Pages/SchedulingPage";
+import Availability from "@/Pages/AvailabilityPage";
+import Meetings from "@/Pages/MeetingsPage";
+import Login from "@/Pages/LoginPage";
 import ProtectedRoute from "./ProtectedRoute";
-import Register from "@/Pages/Register";
-import Redirect from "@/Pages/Redirect";
-import Profile from "@/Pages/Profile";
-import Public from "@/Pages/Public";
+import Register from "@/Pages/RegisterPage";
+import Redirect from "@/Pages/RedirectPage";
+import Profile from "@/Pages/ProfilePage";
+import Public from "@/Pages/PublicPage";
 import MainPageWrapper from "./MainPageWrapper";
 
 const RouteManager = () => {

@@ -8,7 +8,7 @@ import {
   fetchSchedules,
   scheduleError,
   scheduleSuccess,
-} from "@/redux/scheduleSlice";
+} from "@/redux/Slices/scheduleSlice";
 import { getSchedules } from "@/services/schedule.services";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -58,8 +58,17 @@ const Scheduling = () => {
       ) : (
         <ScheduleCreate />
       )}
+<<<<<<< HEAD:src/Pages/Scheduling.jsx
       {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser} open={open} setOpen={setOpen} />}
       { open && <ScheduleDrawer open={open} type="update" setOpen={setOpen}/>}
+=======
+      {schedules.data && (
+        <ScheduleListing
+          schedules={schedules.data}
+          getSchedulesForUser={getSchedulesForUser}
+        />
+      )}
+>>>>>>> dev:src/Pages/SchedulingPage.jsx
     </div>
   );
 };

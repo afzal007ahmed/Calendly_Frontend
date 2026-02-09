@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppContext } from "@/context/AppContext";
-import GoogleButton from "@/CustomComponents/GoogleButton";
+import GoogleButton from "@/components/CustomComponents/GoogleButton";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { routes } from "@/Routes/routes";
-import { loginService, registerService } from "@/services/auth.services";
-import { userDetails } from "@/services/user.services";
+import { registerService } from "@/services/auth.services";
 import { emailSchema, passwordSchema } from "@/validations/joi.validate";
 import { Loader2 } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 

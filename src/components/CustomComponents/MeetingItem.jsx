@@ -78,7 +78,7 @@ const MeetingItem = ({ meeting, refresh }) => {
                 variant="outline"
                 className="w-full text-red-600"
                 onClick={handleCancel}
-                disabled={loading}
+                disabled={loading || isCancelled}
               >
                 {loading ? "Cancelling..." : "Cancel"}
               </Button>
