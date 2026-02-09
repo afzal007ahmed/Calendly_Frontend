@@ -17,20 +17,47 @@ export const createSchedule = async (body) => {
     type_of_meeting: body.type,
     duration: body.duration,
     meeting_name: body.title,
-    limit : body.limit
+    limit: body.limit,
   };
-  await axios.post(config.schedules, data , {
-    headers : {
-        Authorization : `Bearer ${token}`
-    }
+  await axios.post(config.schedules, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
 export const deleteSelectedIds = async (ids) => {
   const token = localStorage.getItem("token");
-  await axios.post(config.deleteSchedules, { ids }, {
-    headers : {
-        Authorization : `Bearer ${token}`
-    }
+  await axios.post(
+    config.deleteSchedules,
+    { ids },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+};
+
+export const getScheduleDetailsById = async (id) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(config.schedules + `/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
-}
+  return response.data;
+};
+
+export const updateSchedule = async (id, body) => {
+  const token = localStorage.getItem("token");
+  const data = {
+    type_of_meeting: body.type,
+    duration: body.duration,
+    subject: body.title,
+    limit: body.limit,
+  };
+  await axios.put(config.schedules + `/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

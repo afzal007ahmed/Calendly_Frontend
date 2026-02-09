@@ -9,7 +9,6 @@ export const API_PATHS = {
   schedules: "schedules",
   deleteSchedules: "schedules/delete",
   confirmBooking: "bookings/",
-
   booking: (username, userId, scheduleId) =>
     `book/${username}/${userId}/${scheduleId}`,
 

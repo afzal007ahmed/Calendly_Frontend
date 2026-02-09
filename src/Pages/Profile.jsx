@@ -9,7 +9,7 @@ import { userNameChange } from "@/services/user.services";
 const Profile = () => {
   const { user, setUser } = useContext(AppContext);
   const [change, setChange] = useState(false);
-  const [newName, setNewName] = useState(user.data.name);
+  const [newName, setNewName] = useState(user.data?.name);
 
   const { errorHandler } = useErrorHandler();
 
@@ -44,7 +44,7 @@ const Profile = () => {
         <div>
           {!change ? (
             <p className="font-bold text-3xl" onClick={() => setChange(true)}>
-              {user.data.name}
+              {user.data?.name}
             </p>
           ) : (
             <Input
@@ -57,9 +57,9 @@ const Profile = () => {
             />
           )}
           <p className="font-bold text-xl my-1 text-gray-400">
-            {user.data.email}
+            {user.data?.email}
           </p>
-          <p className="text-xs font-medium">#{user.data.id}</p>
+          <p className="text-xs font-medium">#{user.data?.id}</p>
         </div>
       </div>
     </div>

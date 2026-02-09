@@ -1,6 +1,7 @@
 import { config } from "@/config";
 import GoogleButton from "@/CustomComponents/GoogleButton";
 import ScheduleCreate from "@/CustomComponents/ScheduleCreate";
+import ScheduleDrawer from "@/CustomComponents/ScheduleDrawer";
 import ScheduleListing from "@/CustomComponents/ScheduleListing";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import {
@@ -15,6 +16,7 @@ import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 const Scheduling = () => {
+  const [ open , setOpen ] = useState(false) ;
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const [searchParams] = useSearchParams();
@@ -56,7 +58,8 @@ const Scheduling = () => {
       ) : (
         <ScheduleCreate />
       )}
-      {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser}/>}
+      {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser} open={open} setOpen={setOpen} />}
+      { open && <ScheduleDrawer open={open} type="update" setOpen={setOpen}/>}
     </div>
   );
 };

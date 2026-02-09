@@ -18,7 +18,11 @@ import AvailibilityList from "./AvailibilityList";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { createSchedule, getSchedules } from "@/services/schedule.services";
+import {
+  createSchedule,
+  getSchedules,
+  updateSchedule,
+} from "@/services/schedule.services";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSchedules,
@@ -33,6 +37,7 @@ import {
 const ScheduleDrawer = ({ type, open, setOpen }) => {
   const availability = useSelector((state) => state.availabilityReducer);
   const { user } = useContext(AppContext);
+  const scheduleDetails = useSelector((state) => state.schdeuleDetailsReducer);
   const dispatch = useDispatch();
   const [select, setSelect] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -96,7 +101,7 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
     });
   }
 
-  async function addSchedule() {
+  async function handleChange(type) {
     try {
       setLoading(true);
       if (
@@ -113,13 +118,23 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
         setLoading(false);
         return;
       }
-      await createSchedule(details);
+      if (type === "update") {
+        await updateSchedule(details.id, details);
+        toast.success("Schedule updated.");
+      } else {
+        await createSchedule(details);
+        toast.success("Schedule created.");
+      }
+
       dispatch(fetchSchedules());
       const response = await getSchedules();
       dispatch(scheduleSuccess(response));
-      toast.success("Schedule created.");
       setLoading(false);
-      setOpen((prev) => ({ ...prev, [type]: !prev[type] }));
+      if (type === "update") {
+        setOpen(false);
+      } else {
+        setOpen((prev) => ({ ...prev, [type]: !prev[type] }));
+      }
     } catch (error) {
       dispatch(scheduleError());
       setLoading(false);
@@ -140,7 +155,21 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
 
   useEffect(() => {
     fetchAvailability();
-  }, []);
+    if (type === "update" && scheduleDetails.data && !scheduleDetails.loading) {
+      setDetails({
+        id: scheduleDetails.data._id,
+        title: scheduleDetails.data.meeting_name,
+        duration: scheduleDetails.data.duration,
+        duration_custom: false,
+        availability: scheduleDetails.data.availability,
+        limit: scheduleDetails.data.limit ? scheduleDetails.data.limit : null,
+        host: user.data.name,
+        duration_unit: "min",
+        type: scheduleDetails.data.type_of_meeting,
+      });
+    }
+  }, [scheduleDetails.data]);
+
   return (
     <Sheet
       open={open}
@@ -148,169 +177,186 @@ const ScheduleDrawer = ({ type, open, setOpen }) => {
         if (!value) {
           reset();
         }
+        if (type === "update") {
+          setOpen(value);
+          return;
+        }
         setOpen((prev) => ({ ...prev, [type]: value }));
       }}
     >
       <SheetContent>
-        <SheetHeader className="gap-0">
-          <p className="text-sm font-bold text-gray-500">Event type</p>
-          {!select ? (
-            <p
-              className="text-2xl font-bold"
-              onClick={() => setSelect((prev) => !prev)}
-            >
-              {" "}
-              {details.title}
-            </p>
-          ) : (
-            <Input
-              placeholder="Enter event title."
-              value={details.title}
-              onChange={(e) => {
-                setDetails((prev) => ({ ...prev, title: e.target.value }));
-              }}
-              className="font-bold"
-              autoFocus={true}
-              onBlur={() => {
-                setSelect(false);
-              }}
-            />
-          )}
-        </SheetHeader>
-        <hr />
-        <div className="flex flex-col justify-between h-full">
-          <div className="flex flex-col gap-3">
-            <ScheduleDrawerSection
-              title="Duration"
-              subTitle={`${details.duration} ${details.duration_unit}`}
-            >
-              <Select
-                defaultValue={details.duration.toString()}
-                onValueChange={(value) => {
-                  if (value === "custom") {
-                    setDetails((prev) => ({
-                      ...prev,
-                      duration_custom: true,
-                      duration: 0,
-                    }));
-                  } else {
-                    setDetails((prev) => ({
-                      ...prev,
-                      duration: parseInt(value),
-                      duration_custom: false,
-                    }));
-                  }
-                }}
-              >
-                <SelectTrigger className="w-full m-2 mt-3 ">
-                  <SelectValue placeholder="Select Duration" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="15">15 min</SelectItem>
-                    <SelectItem value="30">30 min</SelectItem>
-                    <SelectItem value="45">45 min</SelectItem>
-                    <SelectItem value="60">60 min</SelectItem>
-                    <SelectItem value="custom"> custom</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {details.duration_custom && (
-                <div className="flex gap-2">
-                  <Input
-                    value={details.duration}
-                    className="ml-2"
-                    autoFocus={true}
-                    type="number"
-                    onChange={(e) => {
-                      setDetails((prev) => ({
-                        ...prev,
-                        duration: parseInt(e.target.value),
-                      }));
-                    }}
-                  />
+        {scheduleDetails.loading ? (
+          <div className="flex justify-center h-full items-center">
+            <Loader2 className="animate-spin" />
+          </div>
+        ) : (
+          <>
+            <SheetHeader className="gap-0">
+              <p className="text-sm font-bold text-gray-500">Event type</p>
+              {!select ? (
+                <p
+                  className="text-2xl font-bold"
+                  onClick={() => setSelect((prev) => !prev)}
+                >
+                  {" "}
+                  {details.title}
+                </p>
+              ) : (
+                <Input
+                  placeholder="Enter event title."
+                  value={details.title}
+                  onChange={(e) => {
+                    setDetails((prev) => ({ ...prev, title: e.target.value }));
+                  }}
+                  className="font-bold"
+                  autoFocus={true}
+                  onBlur={() => {
+                    setSelect(false);
+                  }}
+                />
+              )}
+            </SheetHeader>
+            <hr />
+            <div className="flex flex-col justify-between h-full">
+              <div className="flex flex-col gap-3">
+                <ScheduleDrawerSection
+                  title="Duration"
+                  subTitle={`${details.duration} ${details.duration_unit}`}
+                >
                   <Select
-                    defaultValue={details.duration_unit}
-                    onValueChange={(value) =>
-                      setDetails((prev) => ({ ...prev, duration_unit: value }))
-                    }
+                    defaultValue={details.duration.toString()}
+                    onValueChange={(value) => {
+                      if (value === "custom") {
+                        setDetails((prev) => ({
+                          ...prev,
+                          duration_custom: true,
+                          duration: 0,
+                        }));
+                      } else {
+                        setDetails((prev) => ({
+                          ...prev,
+                          duration: parseInt(value),
+                          duration_custom: false,
+                        }));
+                      }
+                    }}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Enter time" />
+                    <SelectTrigger className="w-full m-2 mt-3 ">
+                      <SelectValue placeholder="Select Duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="min">min</SelectItem>
-                      <SelectItem value="hrs">hrs</SelectItem>
+                      <SelectGroup>
+                        <SelectItem value="15">15 min</SelectItem>
+                        <SelectItem value="30">30 min</SelectItem>
+                        <SelectItem value="45">45 min</SelectItem>
+                        <SelectItem value="60">60 min</SelectItem>
+                        <SelectItem value="custom"> custom</SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
-              )}
-            </ScheduleDrawerSection>
-            <hr />
-            <ScheduleDrawerSection title="Availability" subTitle={availSub}>
-              {availability.loading && <Loader2 className="animate-spin" />}
-
-              {availability.data && !availability.loading && (
-                <AvailibilityList data={availability.data} />
-              )}
-            </ScheduleDrawerSection>
-
-            {type === "group" && (
-              <>
-                <hr />
-                <ScheduleDrawerSection
-                  title="Limit"
-                  subTitle="Select limit for meeting."
-                >
-                  <Input
-                    value={details.limit?.toString()}
-                    onChange={(e) =>
-                      setDetails((prev) => ({
-                        ...prev,
-                        limit: Number(e.target.value),
-                      }))
-                    }
-                    className="ml-2"
-                  />
+                  {details.duration_custom && (
+                    <div className="flex gap-2">
+                      <Input
+                        value={details.duration}
+                        className="ml-2"
+                        autoFocus={true}
+                        type="number"
+                        onChange={(e) => {
+                          setDetails((prev) => ({
+                            ...prev,
+                            duration: parseInt(e.target.value),
+                          }));
+                        }}
+                      />
+                      <Select
+                        defaultValue={details.duration_unit}
+                        onValueChange={(value) =>
+                          setDetails((prev) => ({
+                            ...prev,
+                            duration_unit: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Enter time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="min">min</SelectItem>
+                          <SelectItem value="hrs">hrs</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </ScheduleDrawerSection>
-              </>
-            )}
+                <hr />
+                <ScheduleDrawerSection title="Availability" subTitle={availSub}>
+                  {availability.loading && <Loader2 className="animate-spin" />}
 
-            <hr />
-            <ScheduleDrawerSection title="Host" subTitle={user.data.name}>
-              <div className="pl-8 mt-4 flex gap-2 font-bold text-sm items-center">
-                <Avatar className="h-[40px] w-[40px]">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="text-xs">
-                  <p className="text-sm">{user.data.name}</p>
-                  <p>{user.data.email}</p>
-                </div>
+                  {availability.data && !availability.loading && (
+                    <AvailibilityList data={availability.data} />
+                  )}
+                </ScheduleDrawerSection>
+
+                {details.type === "group" && details.limit !== null && (
+                  <>
+                    <hr />
+                    <ScheduleDrawerSection
+                      title="Limit"
+                      subTitle="Select limit for meeting."
+                    >
+                      <Input
+                        value={details.limit?.toString()}
+                        onChange={(e) =>
+                          setDetails((prev) => ({
+                            ...prev,
+                            limit: Number(e.target.value),
+                          }))
+                        }
+                        className="ml-2"
+                      />
+                    </ScheduleDrawerSection>
+                  </>
+                )}
+
+                <hr />
+                <ScheduleDrawerSection title="Host" subTitle={user.data.name}>
+                  <div className="pl-8 mt-4 flex gap-2 font-bold text-sm items-center">
+                    <Avatar className="h-[40px] w-[40px]">
+                      <AvatarImage
+                        src="https://github.com/shadcn.png"
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div className="text-xs">
+                      <p className="text-sm">{user.data.name}</p>
+                      <p>{user.data.email}</p>
+                    </div>
+                  </div>
+                </ScheduleDrawerSection>
+                <hr />
               </div>
-            </ScheduleDrawerSection>
-            <hr />
-          </div>
-          <div className="text-end p-2">
-            <Button
-              className=" rounded-full bg-[#006bff] font-bold"
-              onClick={addSchedule}
-            >
-              {" "}
-              {loading ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  <Plus />
-                  <p>Create</p>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
+              <div className="text-end p-2">
+                <Button
+                  className=" rounded-full bg-[#006bff] font-bold"
+                  onClick={() => {
+                    handleChange(type);
+                  }}
+                >
+                  {" "}
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <>
+                      {type !== "update" && <Plus />}
+                      <p>{type === "update" ? "Update" : "Create"}</p>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   );
