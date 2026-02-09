@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { PiLinkSimpleLight } from "react-icons/pi";
 import { IoTrashBinSharp } from "react-icons/io5";
-import { deleteSelectedIds, getScheduleDetailsById } from "@/services/schedule.services";
+import {
+  deleteSelectedIds,
+  getScheduleDetailsById,
+} from "@/services/schedule.services";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { fetchScheduleDetails, fetchScheduleDetailsFailed, fetchScheduleDetailsSuccess } from "@/redux/Slices/scheduleDetailsSlice";
+import { FcInfo } from "react-icons/fc";
+import {
+  fetchScheduleDetails,
+  fetchScheduleDetailsFailed,
+  fetchScheduleDetailsSuccess,
+} from "@/redux/Slices/scheduleDetailsSlice";
 
 const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
   const order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -13,18 +21,17 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
   const [selected, setSelected] = useState([]);
   const { errorHandler } = useErrorHandler();
 
-   async function getScheduleDetails( id ) {
+  async function getScheduleDetails(id) {
     try {
-      dispatch( fetchScheduleDetails() ) ;
-      const data = await getScheduleDetailsById(id) ;
-      dispatch( fetchScheduleDetailsSuccess( data ) ) ;
+      dispatch(fetchScheduleDetails());
+      const data = await getScheduleDetailsById(id);
+      dispatch(fetchScheduleDetailsSuccess(data));
     } catch (error) {
-      errorHandler(error) ;
+      errorHandler(error);
+    } finally {
+      dispatch(fetchScheduleDetailsFailed());
     }
-    finally {
-      dispatch(fetchScheduleDetailsFailed())
-    }
-   }
+  }
 
   function addSelected(id) {
     if (selected.includes(id)) {
@@ -63,7 +70,7 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
           <div
             onClick={() => {
               setOpen(true);
-              getScheduleDetails( schedule._id ) ;
+              getScheduleDetails(schedule._id);
             }}
             key={schedule._id}
             className={`flex justify-between px-6 py-3 items-center rounded-2xl shadow-xl border-l-8 border-violet-700 cursor-pointer
@@ -72,21 +79,21 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
           >
             <div className="flex items-center gap-4">
               <div>
-                {/* selected logic to be done */}
                 <input
                   type="checkbox"
                   checked={selected.includes(schedule._id)}
                   onClick={(e) => {
-                    e.stopPropagation() ;
+                    e.stopPropagation();
                   }}
-                  onChange={(e) => { 
-                    addSelected(schedule._id)}}
+                  onChange={() => {
+                    addSelected(schedule._id);
+                  }}
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-extrabold">{schedule.meeting_name}</p>
                 <div>
-                  {/* icon */}
+                  <FcInfo />
                   <p className="text-sm opacity-55">
                     {schedule.duration} min,{" "}
                     {schedule.type_of_meeting === "one"
@@ -102,7 +109,12 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
                 </p>
               </div>
             </div>
-            <a href={`/${schedule.public_link}`} target="_blank">
+            <a
+              href={`/${schedule.public_link}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="bg-gray-100 px-4 py-2 rounded-2xl border cursor-pointer">
                 <PiLinkSimpleLight className="text-xl font-extrabold" />
               </div>
