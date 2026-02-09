@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
   const user = useSelector((state ) => state.userReducer )
   const token = localStorage.getItem("token");
 
-  if (user.loading) {
+  if (user.loading || ( !user.loading && !user.data )) {
     return (
       <div className="min-h-full flex items-center justify-center">
         <Loader2 className="animate-spin" size={30} />

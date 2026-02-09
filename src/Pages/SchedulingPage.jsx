@@ -16,15 +16,14 @@ import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 const Scheduling = () => {
-  const [ open , setOpen ] = useState(false) ;
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer);
   const token = localStorage.getItem("token");
   const [searchParams] = useSearchParams();
   const { errorHandler } = useErrorHandler();
   const message = searchParams.get("message");
-  if (message) {
-    toast.error(message);
-  }
+
   const schedules = useSelector((state) => state.ScheduleReducer);
   const [googleCalenderMissing, setGoogleCalenderMissing] = useState(false);
 
@@ -49,6 +48,9 @@ const Scheduling = () => {
 
   useEffect(() => {
     getSchedulesForUser();
+    if (message ) {
+      toast.error(message);
+    }
   }, []);
 
   return (
@@ -58,8 +60,15 @@ const Scheduling = () => {
       ) : (
         <ScheduleCreate />
       )}
-      {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser} open={open} setOpen={setOpen} />}
-      { open && <ScheduleDrawer open={open} type="update" setOpen={setOpen}/>}
+      {schedules.data && (
+        <ScheduleListing
+          schedules={schedules.data}
+          getSchedulesForUser={getSchedulesForUser}
+          open={open}
+          setOpen={setOpen}
+        />
+      )}
+      {open && <ScheduleDrawer open={open} type="update" setOpen={setOpen} />}
     </div>
   );
 };
