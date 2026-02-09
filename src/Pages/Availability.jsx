@@ -114,15 +114,6 @@ const Availability = () => {
               <p>Set when you are typically available for meetings</p>
             </div>
           </div>
-          <div className='flex flex-col gap-1'>
-            <div className='flex items-center gap-3'>
-              <SlCalender/>
-              <p className='font-bold font-lg'>Date-specific hours</p>
-            </div>
-            <p className='text-xs opacity-50'>
-              Adjust hours for specific days
-            </p>
-          </div>
       </div>
       <div className='mt-10 flex flex-col gap-6 min-w-80'>
         {

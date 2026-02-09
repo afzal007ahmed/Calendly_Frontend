@@ -116,11 +116,15 @@
 }
 
 @layer base {
+  :root {
+    --font-sans: "Inter", system-ui, sans-serif;
+  }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 } 
 
