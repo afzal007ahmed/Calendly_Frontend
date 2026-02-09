@@ -1,8 +1,8 @@
 import { config } from "@/config";
-import GoogleButton from "@/CustomComponents/GoogleButton";
-import ScheduleCreate from "@/CustomComponents/ScheduleCreate";
-import ScheduleDrawer from "@/CustomComponents/ScheduleDrawer";
-import ScheduleListing from "@/CustomComponents/ScheduleListing";
+import GoogleButton from "../components/CustomComponents/GoogleButton";
+import ScheduleCreate from "../components/CustomComponents/ScheduleCreate";
+import ScheduleDrawer from "../components/CustomComponents/ScheduleDrawer";
+import ScheduleListing from "../components/CustomComponents/ScheduleListing";
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import {
   fetchSchedules,
@@ -58,17 +58,8 @@ const Scheduling = () => {
       ) : (
         <ScheduleCreate />
       )}
-<<<<<<< HEAD:src/Pages/Scheduling.jsx
       {schedules.data && <ScheduleListing schedules={schedules.data} getSchedulesForUser={getSchedulesForUser} open={open} setOpen={setOpen} />}
       { open && <ScheduleDrawer open={open} type="update" setOpen={setOpen}/>}
-=======
-      {schedules.data && (
-        <ScheduleListing
-          schedules={schedules.data}
-          getSchedulesForUser={getSchedulesForUser}
-        />
-      )}
->>>>>>> dev:src/Pages/SchedulingPage.jsx
     </div>
   );
 };

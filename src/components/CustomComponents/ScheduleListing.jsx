@@ -5,7 +5,7 @@ import { deleteSelectedIds, getScheduleDetailsById } from "@/services/schedule.s
 import useErrorHandler from "@/hooks/ErrorHandler/useErrorHandler";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { fetchScheduleDetails, fetchScheduleDetailsFailed, fetchScheduleDetailsSuccess } from "@/redux/scheduleDetailsSlice";
+import { fetchScheduleDetails, fetchScheduleDetailsFailed, fetchScheduleDetailsSuccess } from "@/redux/Slices/scheduleDetailsSlice";
 
 const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
   const order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -76,7 +76,11 @@ const ScheduleListing = ({ schedules, getSchedulesForUser, open, setOpen }) => {
                 <input
                   type="checkbox"
                   checked={selected.includes(schedule._id)}
-                  onChange={() => addSelected(schedule._id)}
+                  onClick={(e) => {
+                    e.stopPropagation() ;
+                  }}
+                  onChange={(e) => { 
+                    addSelected(schedule._id)}}
                 />
               </div>
               <div className="flex flex-col gap-1">

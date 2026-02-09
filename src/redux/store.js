@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import ScheduleReducer from "./scheduleSlice";
-import availabilityReducer from "./availabilitySlice";
-import meetingReducer from "./meetingSlice";
-import schdeuleDetailsReducer from "./scheduleDetailsSlice"
+import ScheduleReducer from "./Slices/scheduleSlice";
+import availabilityReducer from "./Slices/availabilitySlice";
+import meetingReducer from "./Slices/meetingSlice";
+import schdeuleDetailsReducer from "./Slices/scheduleDetailsSlice"
 
 export const store = configureStore({
   reducer: {

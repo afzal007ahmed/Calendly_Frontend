@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { fetchSchedules } from "./scheduleSlice";
 
 const initialState = {
     loading : false ,
