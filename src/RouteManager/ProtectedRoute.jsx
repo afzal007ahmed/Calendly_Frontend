@@ -7,7 +7,7 @@ import { Navigate } from "react-router";
 
 const ProtectedRoute = ({ children }) => {
   const user = useSelector((state ) => state.userReducer )
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
 
   if (user.loading || ( !user.loading && !user.data )) {
     return (
@@ -16,10 +16,10 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  
-  if (!token) {
-    return <Navigate to={routes.login} />;
+  if( !token ) {
+    return <Navigate to={routes.login} />
   }
+  
 
   return children;
 };

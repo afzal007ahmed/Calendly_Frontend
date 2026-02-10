@@ -18,7 +18,6 @@ import { toast } from "sonner";
 const Scheduling = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer);
   const token = localStorage.getItem("token");
   const [searchParams] = useSearchParams();
   const { errorHandler } = useErrorHandler();
