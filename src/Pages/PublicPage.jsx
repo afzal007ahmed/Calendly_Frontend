@@ -60,7 +60,6 @@ const Public = () => {
       return;
     }
 
-
     async function getDetails() {
       try {
         const response = await getBooking(username, userId, scheduleId);
@@ -96,25 +95,38 @@ const Public = () => {
     const dayAvailability = availability?.find(
       (a) => weekdays.indexOf(a.day) === selectedDate.getDay(),
     );
+
     if (!dayAvailability?.from || !dayAvailability?.to) {
       setSlots([]);
       return;
     }
-    setSlots([]);
+
+    const selectedDateString = new Date(selectedDate)
+      .toISOString()
+      .split("T")[0];
+
+    const newSlots = [];
 
     for (
       let start = dayAvailability.from;
       start + duration <= dayAvailability.to;
       start += duration
     ) {
-      if((schedule?.type_of_meeting === "one")){
-        const isPresent = bookings.some(b => b?.from === start)
-        
-        if(isPresent)
-          continue;
+      if (schedule?.type_of_meeting === "one") {
+        const isPresent = bookings?.some(
+          (b) =>
+            b?.from === start &&
+            new Date(b?.date).toISOString().split("T")[0] ===
+              selectedDateString,
+        );
+
+        if (isPresent) continue;
       }
-      setSlots((prev) => [...prev, minutesToTime(start)]);
+
+      newSlots.push(minutesToTime(start));
     }
+
+    setSlots(newSlots);
   }
 
   function timeToMinutes(time) {
@@ -153,7 +165,7 @@ const Public = () => {
         subject: schedule?.meeting_name,
         from: timeToMinutes(selectedSlot),
         to: timeToMinutes(selectedSlot) + duration,
-        limit : schedule?.limit ,
+        limit: schedule?.limit,
         date: date,
         guest: {
           name: guest.name,
@@ -169,8 +181,7 @@ const Public = () => {
       }, 2000);
     } catch (error) {
       errorHandler(error);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   }
@@ -188,24 +199,26 @@ const Public = () => {
               <AiOutlineFieldTime className="text-2xl opacity-60" />
               <div>
                 <p className="text-xs font-semibold opacity-45">
-                  {schedule?.duration} min </p>
+                  {schedule?.duration} min{" "}
+                </p>
                 <p className="text-xs font-semibold opacity-45">
-                  {
-                    date!==null && selectedSlot!==null &&
-                    `${selectedSlot} - ${minutesToTime(timeToMinutes(selectedSlot) +duration)}`
-                  }
-                </p>  
+                  {date !== null &&
+                    selectedSlot !== null &&
+                    `${selectedSlot} - ${minutesToTime(timeToMinutes(selectedSlot) + duration)}`}
+                </p>
               </div>
             </div>
-            { date!==null &&
+            {date !== null && (
               <div className="flex gap-2 items-center">
                 <MdOutlineDateRange className="text-2xl opacity-60" />
                 <p className="text-xs font-semibold opacity-45">{`${weekdays[date?.getDay()]}, ${date?.getDate()} ${months[date?.getMonth()]} ${date?.getFullYear()}`}</p>
               </div>
-            }
+            )}
             <div className="flex gap-2 items-center">
               <IoEarthOutline className="text-2xl opacity-60" />
-              <p className="text-xs font-semibold opacity-45">Indian Standard Time (IST)</p>
+              <p className="text-xs font-semibold opacity-45">
+                Indian Standard Time (IST)
+              </p>
             </div>
           </div>
         </div>
@@ -230,7 +243,7 @@ const Public = () => {
                   const weekdayName = weekdays[picked.getDay()];
                   const isAvailable = allowedDays?.includes(weekdayName);
 
-                  if(picked < today){
+                  if (picked < today) {
                     toast.info("Please select valid days!");
                     return;
                   }
@@ -261,11 +274,12 @@ const Public = () => {
                 }}
               />
             </div>
-            <div className={`p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4 ${date===null ? "overflow-hidden" : "overflow-scroll"}`}>
-              {
-                date!== null && 
+            <div
+              className={`p-6 flex flex-col gap-10 items-center overflow-x-hidden mt-4 ${date === null ? "overflow-hidden" : "overflow-scroll"}`}
+            >
+              {date !== null && (
                 <p className="font-bold opacity-75">{`${weekdays[date?.getDay()]}, ${date?.getDate()} ${months[date?.getMonth()]} ${date?.getFullYear()}`}</p>
-              }
+              )}
               <div className="flex flex-col gap-3 w-full">
                 {slots.map((slot) => (
                   <div key={slot} className="flex w-60 gap-1">
