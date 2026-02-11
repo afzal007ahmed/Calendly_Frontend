@@ -10,7 +10,12 @@ import { Loader2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import { useDispatch } from "react-redux";
-import { fetchUserFailed, fetchUserLoading, fetchUserSuccess, userReset } from "@/redux/Slices/userSlice";
+import {
+  fetchUserFailed,
+  fetchUserLoading,
+  fetchUserSuccess,
+  userReset,
+} from "@/redux/Slices/userSlice";
 
 const Login = () => {
   const nav = useNavigate();
@@ -27,13 +32,6 @@ const Login = () => {
 
   const [searchParams] = useSearchParams();
   const message = searchParams.get("message");
-  if (message) {
-    toast.error(message);
-  }
-
-  if (token) {
-    return <Navigate to={routes.scheduling} />;
-  }
 
   async function loginHandler() {
     try {
@@ -41,9 +39,9 @@ const Login = () => {
       dispatch(fetchUserLoading());
       await loginService(details);
       const data = await userDetails();
+      nav(routes.scheduling);
       dispatch(fetchUserSuccess(data.data));
       setLoading(false);
-      nav(routes.scheduling);
     } catch (error) {
       dispatch(fetchUserFailed());
       setLoading(false);
@@ -52,10 +50,17 @@ const Login = () => {
   }
 
   useEffect(() => {
-    if (!token) {  
-      dispatch(userReset())
+    if (!token) {
+      dispatch(userReset());
+    }
+    if (message) {
+      toast.error(message);
     }
   }, []);
+
+  if (token) {
+    return <Navigate to={routes.scheduling} />;
+  }
 
   return (
     <div className="min-h-[100vh] flex-1 flex flex-col flex-wrap justify-center items-center bg-[#f8f9fb] rounded-lg">
