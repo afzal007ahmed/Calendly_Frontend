@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
 
   if (user.loading) {
     return (
-      <div className="min-h-full flex items-center w-full justify-center">
+      <div className="min-h-[100vh] flex items-center w-full justify-center">
         <Loader2 className="animate-spin" size={30} />
       </div>
     );
