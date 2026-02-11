@@ -2,20 +2,21 @@ import { useEffect } from "react";
 import { userDetails } from "./services/user.services";
 import useErrorHandler from "./hooks/ErrorHandler/useErrorHandler";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchUserFailed,
   fetchUserLoading,
   fetchUserSuccess,
 } from "./redux/Slices/userSlice";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { routes } from "./Routes/routes";
+import { Loader2 } from "lucide-react";
 
 const AuthProvider = ({ children }) => {
   const { errorHandler } = useErrorHandler();
   const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
-  const nav = useNavigate();
 
   const handleUser = async () => {
     try {
@@ -29,12 +30,21 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    handleUser();
+    if (token) {
+      handleUser();
+    }
   }, []);
 
+  if (user.loading) {
+    return (
+      <div className="min-h-full flex items-center w-full justify-center">
+        <Loader2 className="animate-spin" size={30} />
+      </div>
+    );
+  }
 
   if (!token) {
-    return <Navigate to={routes.login}  />;
+    return <Navigate to={routes.login} />;
   }
 
   return children;

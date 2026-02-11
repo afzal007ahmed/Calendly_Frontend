@@ -7,9 +7,10 @@ import { Outlet } from "react-router";
 
 const MainPageWrapper = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <AuthProvider>
+    <AuthProvider>
+      <SidebarProvider>
+        <AppSidebar />
+
         <div className="flex-1 flex flex-col">
           <SidebarTrigger className="h-[30px] absolute top-0" />
           <Navbar />
@@ -17,8 +18,8 @@ const MainPageWrapper = () => {
             <Outlet />
           </div>
         </div>
-      </AuthProvider>
-    </SidebarProvider>
+      </SidebarProvider>
+    </AuthProvider>
   );
 };
 
